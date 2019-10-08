@@ -1,0 +1,9 @@
+{"ignore": ["data/config_sp_en.zip", "data/config_sp_ru.zip", "data/config_sp_pl.zip",
+"music/Ocean.mp3", "music/Tropics.mp3", "swf/landscape.swf",
+"swf/textLayout_2.0.0.232.swz", "swf/UiLang.swf", "swf/ClubHwn.swf",
+"swf/NewYear2014.swf", "swf/events/landscapeNY.swf", "swf/Pets.swf",
+"swf/TreasureSounds.swf", "swf/Treasure.swf", "house/RoomBase.swf"],
+"misc": ["swf/preloader/PillowFightComix_ru.swf",
+"swf/preloader/RomanceComix_ru.swf", "swf/preloader/GirlsDressesComix_ru.swf",
+"promo/error/ErrorMessageBg.png", "promo/error/ErrorMessage1_ru.png",
+"promo/error/ErrorMessage2_ru.png", "promo/error/ErrorMessage3_ru.png"]}

@@ -1,0 +1,2 @@
+class WrongRoom(Exception):
+    pass

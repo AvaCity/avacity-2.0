@@ -1,0 +1,9 @@
+# game server
+bitstring
+redis
+lxml
+# web
+aiohttp
+aiohttp_session
+aiohttp_jinja2
+cryptography

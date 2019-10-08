@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Ava.City 2.0</title>
+</head>
+<body>
+    {% if not token %}
+    <form method="post" action="/login">
+        <table>
+            <tr>
+                <td><label for="loginField">Логин</label></td>
+                <td><input id="loginField" type="text" name="login" required></td>
+            </tr>
+            <tr>
+                <td><label for="passwordField">Пароль</label></td>
+                <td><input id="passwordField" type="password" name="password" required></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center"><input type="submit" value="Войти"></td>
+            </tr>
+        </table>
+    </form>
+    <p><a href="/register">Зарегистрироваться</a></p>{% else %}<input id="clickMe" type="button" value="Начать игру" onclick="start();"/>
+    <a style="display: none;" id="flash" href="https://get.adobe.com/flashplayer">Включить Flash</a>
+    <div id="flashContent"></div>
+    <br>
+    <a href="/logout">Выйти</a>
+    <script>
+        function start(){
+            document.getElementById('clickMe').style.display = "none";
+            if (swfobject.getFlashPlayerVersion().major == 0){
+                document.getElementById('flash').style.display = "block";
+                return;
+            }
+            var vars = {};
+            vars['config'] = '/appconfig.xml';
+            vars['versions'] = '/files/versions.json';
+            vars['appSwf'] = '/files/pnz-city.swf';
+            var flashVars = [];
+            for (var variable in vars) {
+                flashVars.push(variable + '=' + vars[variable]);
+            }
+            var params = {
+                flashvars: flashVars.join("&"),
+                allowfullscreen: "true",
+                allowscriptaccess: "always",
+                allowFullScreenInteractive: "true",
+                allownetworking: "all",
+                wmode: "transparent"
+            };
+            var el = document.getElementById("flashContent");
+            swfobject.embedSWF("/files/pnz-city-container.swf", el, 1280, 720, 10, null, null, params, {name: "flashContent"});
+        }
+    </script>
+    <script type="text/javascript" src="/files/swfobject.js"></script>{% endif %}
+</body>
+</html>

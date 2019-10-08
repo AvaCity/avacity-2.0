@@ -1,0 +1,139 @@
+import os
+import json
+import shutil
+import asyncio
+import zipfile
+import aiohttp
+from lxml import etree
+
+download_url = "http://cdn-sp.tortugasocial.com/avataria-ru/"
+versions = {}
+with open("update.json", "r") as f:
+    config = json.load(f)
+
+
+async def main():
+    async with aiohttp.ClientSession() as session:
+        async with session.get(download_url+"versions.json") as resp:
+            data = await resp.json()
+            print("Got versions.json")
+    tasks = []
+    loop = asyncio.get_event_loop()
+    async with aiohttp.ClientSession() as session:
+        for item in data:
+            if data[item] in item or "island" in item.lower():
+                continue
+            if item in config["ignore"]:
+                continue
+            tasks.append(loop.create_task(download_file(item, data[item],
+                                                        session)))
+        await asyncio.wait(tasks)
+    print("Processing config")
+    with open("files/versions.json", "w") as f:
+        f.write(json.dumps(versions))
+    if "data/config_all_ru.zip" not in versions:
+        print("Error - config_all_ru.zip not found")
+    else:
+        await process_config(versions["data/config_all_ru.zip"])
+    async with aiohttp.ClientSession() as session:
+        for filename in ["pnz-city.swf", "pnz-city-container.swf"]:
+            async with session.get(f"{download_url}app/{filename}") as resp:
+                if resp.status != 200:
+                    print(f"Can't get {filename}")
+                    return
+                content = await resp.read()
+            with open(f"files/{filename}", "wb") as f:
+                f.write(content)
+            print(f"Got {filename}")
+        for filename in config["misc"]:
+            tmp = filename.split("/")
+            tmp.pop()
+            folder = "/".join(tmp)
+            async with session.get(f"{download_url}{filename}") as resp:
+                if resp.status != 200:
+                    print("Can't get {filename}")
+                    return
+                content = await resp.read()
+            os.makedirs(f"files/{folder}", exist_ok=True)
+            with open(f"files/{filename}", "wb") as f:
+                f.write(content)
+            print(f"Got {filename}")
+
+
+async def process_config(version):
+    directory = "config_all_ru"
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
+    os.makedirs(directory)
+    file = f"files/data/config_all_ru_{version}.zip"
+    with zipfile.ZipFile(file, 'r') as zip_ref:
+        zip_ref.extractall(directory)
+    parser = etree.XMLParser(remove_comments=True)
+    for filename in ["furniture", "kitchen", "bathroom", "decor",
+                     "roomLayout"]:
+        doc = etree.parse(f"{directory}/inventory/{filename}.xml",
+                          parser=parser)
+        root = doc.getroot()
+        tasks = []
+        loop = asyncio.get_event_loop()
+        async with aiohttp.ClientSession() as session:
+            for tmp in root.findall(".//item"):
+                name = tmp.attrib["name"]
+                folder = filename
+                if folder == "roomLayout":
+                    if name == "RoomBase":
+                        continue
+                    folder = "house"
+                elif folder == "decor":
+                    parent = tmp.getparent()
+                    if parent.attrib["id"] == "achievementsDecor":
+                        continue
+                url = f"{download_url}swf/furniture/{folder}/{name}.swf"
+                tasks.append(loop.create_task(download_furniture(url,
+                                                                 session)))
+            await asyncio.wait(tasks)
+
+
+async def download_file(filename, version, session):
+    if "music" in filename:
+        final = filename
+    else:
+        final = filename.split(".")[0]+f"_{version}."+filename.split(".")[1]
+    if os.path.exists("files/"+final):
+        print(f"Already found - {final}")
+        if "music" not in filename:
+            versions[filename] = version
+        return
+    async with session.get(download_url+final) as resp:
+        if resp.status != 200:
+            print(f"Can't get {final}")
+            return
+        content = await resp.read()
+    tmp = filename.split("/")
+    tmp.pop()
+    folder = "/".join(tmp)
+    os.makedirs("files/"+folder, exist_ok=True)
+    with open("files/"+final, "wb") as f:
+        f.write(content)
+    if "music" not in filename:
+        versions[filename] = version
+    print(f"Got {final}")
+
+
+async def download_furniture(url, session):
+    folder = url.split("/")[-2]
+    final = f"swf/furniture/{folder}/{url.split('/')[-1]}"
+    if os.path.exists("files/"+final):
+        print(f"Already found - {final}")
+        return
+    async with session.get(url) as resp:
+        if resp.status != 200:
+            print(f"Can't get {url.split('/')[-2]}/{url.split('/')[-1]}")
+            return
+        content = await resp.read()
+    os.makedirs(f"files/swf/furniture/{folder}", exist_ok=True)
+    with open("files/"+final, "wb") as f:
+        f.write(content)
+    print(f"Got {url.split('/')[-2]}/{url.split('/')[-1]}")
+
+asyncio.run(main())
