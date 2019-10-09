@@ -52,7 +52,10 @@ def encodeValue(data, forDict=False):
     elif isinstance(data, str):
         if not forDict:
             final_data.append(f'int:8=5')
-        length = len(data)
+        if not all(ord(c) < 128 for c in data):  # check for non ASCII chars
+            length = len(data.encode().hex())//2
+        else:
+            length = len(data)
         while (length & 4294967168) != 0:
             final_data.append(f"uint:8={length & 127 | 128}")
             length = zero_fill_right_shift(length, 7)
