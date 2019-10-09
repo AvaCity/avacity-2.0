@@ -17,24 +17,24 @@ class Inventory():
         else:
             tid = name
             iid = ""
-            item = self.server.redis.lrange(f"uid:{self.uid}:items:{name}",
-                                            0, -1)
-            if item:
-                if type_ == "cls":
-                    logging.error("Can't be more than one cloth")
-                    return
-                self.server.redis.lset(f"uid:{self.uid}:items:{name}", 1,
-                                       int(item[1])+amount)
-                for item in self.inv["c"][type_]["it"]:
-                    if item["tid"] == tid and item["iid"] == iid:
-                        item["c"] = int(item[1])+amount
-                        break
-            else:
-                self.server.redis.sadd(f"uid:{self.uid}:items", name)
-                self.server.redis.rpush(f"uid:{self.uid}:items:{name}", type_,
-                                        amount)
-                type_items = self.inv["c"][type_]["it"]
-                type_items.append({"c": amount, "tid": tid, "iid": iid})
+        item = self.server.redis.lrange(f"uid:{self.uid}:items:{name}",
+                                        0, -1)
+        if item:
+            if type_ == "cls":
+                logging.error("Can't be more than one cloth")
+                return
+            self.server.redis.lset(f"uid:{self.uid}:items:{name}", 1,
+                                    int(item[1])+amount)
+            for item in self.inv["c"][type_]["it"]:
+                if item["tid"] == tid and item["iid"] == iid:
+                    item["c"] = int(item[1])+amount
+                    break
+        else:
+            self.server.redis.sadd(f"uid:{self.uid}:items", name)
+            self.server.redis.rpush(f"uid:{self.uid}:items:{name}", type_,
+                                    amount)
+            type_items = self.inv["c"][type_]["it"]
+            type_items.append({"c": amount, "tid": tid, "iid": iid})
 
     def take_item(self, item, amount=1):
         items = self.server.redis.smembers(f"uid:{self.uid}:items")
@@ -66,6 +66,7 @@ class Inventory():
     def change_wearing(self, cloth, wearing):
         if not self.server.redis.lindex(f"uid:{self.uid}:items:{cloth}", 0):
             logging.error(f"Cloth {cloth} not found for {self.uid}")
+            return
         if "_" in cloth:
             tid, iid = cloth.split("_")
         else:
@@ -73,7 +74,11 @@ class Inventory():
             iid = ""
         type_items = self.inv["c"]["cls"]["it"]
         if wearing:
-            self._check_conflicts(cloth)
+            if "_" in cloth:
+                name = cloth.split("_")[0]
+            else:
+                name = cloth
+            self._check_conflicts(name)
             for item in type_items:
                 if item["tid"] == tid and item["iid"] == iid:
                     type_items.remove(item)
