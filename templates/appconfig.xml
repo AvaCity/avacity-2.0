@@ -50,9 +50,9 @@
     <allowedIds></allowedIds>
 
     <preloaderThemes>
-        <theme id="pillows" url="swf/preloader/PillowFightComix_ru.swf"/>
-        <theme id="romance" url="swf/preloader/RomanceComix_ru.swf"/>
-        <theme id="dresses" url="swf/preloader/GirlsDressesComix_ru.swf"/>
+        <theme id="pillows" url="/files/swf/preloader/PillowFightComix_ru.swf"/>
+        <theme id="romance" url="/files/swf/preloader/RomanceComix_ru.swf"/>
+        <theme id="dresses" url="/files/swf/preloader/GirlsDressesComix_ru.swf"/>
     </preloaderThemes>
 
     <appNotAvailableUrls bgUrl="/files/promo/error/ErrorMessageBg.png">

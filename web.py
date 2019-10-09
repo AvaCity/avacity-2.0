@@ -113,9 +113,9 @@ async def prelogin(request):
                                        "avatariaLevel": get_level(exp)}})
 
 
-@routes.get("/social")
+@routes.post("/social")
 async def social(request):
-    data = request.query #await request.post()
+    data = await request.post()
     if not data["method"]:
         raise web.HTTPClientError()
     if data["method"] == "getTestUsers":
