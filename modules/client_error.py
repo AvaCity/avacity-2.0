@@ -19,7 +19,7 @@ class ClientError():
         filename = datetime.datetime.now().strftime("%d.%m.%Y_%H:%M:%S.log")
         if len(os.listdir(f"errors/{client.uid}")) >= 100:
             return
-        with open(f"errors/{client.uid}/{filename}") as file:
+        with open(f"errors/{client.uid}/{filename}", "w") as file:
             file.write(message+"\r\n")
             file.write(log)
         logging.error(f"Client {client.uid} error")
