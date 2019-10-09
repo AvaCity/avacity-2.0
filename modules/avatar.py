@@ -62,7 +62,7 @@ class Avatar(Module):
         elif subcommand == "buy":
             self.buy_cloth(msg[2]["tpid"], client)
         elif subcommand == "bcc":
-            self.buy_coloded_clothes(msg[2]["clths"], client)
+            self.buy_colored_clothes(msg[2]["clths"], client)
         else:
             logging.warning(f"Command {msg[1]} not found")
 
@@ -129,7 +129,7 @@ class Avatar(Module):
                                      "clths": clths, "ccltn": ccltn,
                                      "crt": user_data["crt"]}])
 
-    def buy_coloded_clothes(self, clothes, client):
+    def buy_colored_clothes(self, clothes, client):
         items = self.server.redis.smembers(f"uid:{client.uid}:items")
         if self.server.get_appearance(client.uid)["g"] == 1:
             gender = "boy"
