@@ -142,8 +142,7 @@ class Avatar(Module):
         for item in clothes:
             cloth = item["tpid"]
             clid = item["clid"]
-            if f"{cloth}_{clid}" in items:
-                logging.warning(f"Already bought {cloth}_{clid} {client.uid}")
+            if f"{cloth}_{clid}" in items or cloth in items:
                 continue
             for category in self.server.clothes[gender]:
                 for item in self.server.clothes[gender][category]:
