@@ -82,7 +82,7 @@ class House(Location):
             room = msg[0].split("_")[-1]
             room_data = self.server.redis.lrange(f"rooms:{client.uid}:{room}",
                                                  0, -1)
-            room_items = self.server.get_room_items(client.uid, tmp)
+            room_items = self.server.get_room_items(client.uid, room)
             for tmp in self.server.online.copy():
                 if tmp.room != msg[0]:
                     continue
