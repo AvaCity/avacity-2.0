@@ -80,7 +80,7 @@ class Furniture(Module):
                                     item["y"], item["z"], item["d"])
 
     def del_item(self, item, room, uid):
-        items = self.server.redis.smembers(f"rooms:{uid}:{room[2]}:items")
+        items = self.server.redis.smembers(f"rooms:{uid}:{room}:items")
         if item not in items:
             return
         self.server.redis.srem(f"rooms:{uid}:{room}:items", item)
