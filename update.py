@@ -3,6 +3,7 @@ import json
 import shutil
 import asyncio
 import zipfile
+import hashlib
 import aiohttp
 from lxml import etree
 
@@ -29,8 +30,6 @@ async def main():
                                                         session)))
         await asyncio.wait(tasks)
     print("Processing config")
-    with open("files/versions.json", "w") as f:
-        f.write(json.dumps(versions))
     if "data/config_all_ru.zip" not in versions:
         print("Error - config_all_ru.zip not found")
     else:
@@ -69,6 +68,45 @@ async def process_config(version):
     with zipfile.ZipFile(file, 'r') as zip_ref:
         zip_ref.extractall(directory)
     parser = etree.XMLParser(remove_comments=True)
+    for filename in ["boyClothes", "girlClothes"]:
+        doc = etree.parse(f"{directory}/inventory/{filename}.xml",
+                          parser=parser)
+        root = doc.getroot()
+        for el in root.xpath("//item[@canBuy='0']"):
+            del el.attrib["canBuy"]
+        string = etree.tostring(root, pretty_print=True,
+                                xml_declaration=True).decode()
+        with open(f"{directory}/inventory/{filename}.xml", "w") as f:
+            f.write(string)
+    doc = etree.parse(f"{directory}/avatarAppearance/appearance.xml",
+                      parser=parser)
+    root = doc.getroot()
+    for el in root.xpath("//item[@salonOnly='1']"):
+        del el.attrib["salonOnly"]
+    for el in root.xpath("//item[@canBuy='0']"):
+        del el.attrib["canBuy"]
+    for el in root.xpath("//item[@clanOnly='1']"):
+        del el.attrib["clanOnly"]
+    for el in root.xpath("//item[@visagistLevel]"):
+        del el.attrib["visagistLevel"]
+    string = etree.tostring(root, pretty_print=True,
+                            xml_declaration=True).decode()
+    with open(f"{directory}/avatarAppearance/appearance.xml", "w") as f:
+        f.write(string)
+    z = zipfile.ZipFile("files/data/config_all_ru.zip", mode="w")
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            z.write(os.path.join(root, file),
+                    arcname=os.path.join(root,
+                                         file).split("config_all_ru/")[1])
+    z.close()
+    with open("files/data/config_all_ru.zip", mode="rb") as f:
+        hash_ = hashlib.md5(f.read()).hexdigest()
+    os.rename("files/data/config_all_ru.zip",
+              f"files/data/config_all_ru_{hash_}.zip")
+    versions["data/config_all_ru.zip"] = hash_
+    with open("files/versions.json", "w") as f:
+        f.write(json.dumps(versions))
     for filename in ["furniture", "kitchen", "bathroom", "decor",
                      "roomLayout"]:
         doc = etree.parse(f"{directory}/inventory/{filename}.xml",
