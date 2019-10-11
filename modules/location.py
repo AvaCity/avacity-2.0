@@ -13,7 +13,7 @@ class Location(Module):
         if subcommand in ["u", "m", "k", "sa", "sl", "bd", "lks", "hs", "sex"]:
             msg.pop(0)
             if subcommand == "u":
-                client.pos = (msg[1]["x"], msg[1]["y"])
+                client.position = (msg[1]["x"], msg[1]["y"])
                 client.direction = msg[1]["d"]
                 if "at" in msg[1]:
                     client.action_tag = msg[1]["at"]
