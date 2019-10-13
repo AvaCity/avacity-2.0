@@ -25,9 +25,9 @@ class Inventory():
                 return
             self.server.redis.lset(f"uid:{self.uid}:items:{name}", 1,
                                     int(item[1])+amount)
-            for item in self.inv["c"][type_]["it"]:
-                if item["tid"] == tid and item["iid"] == iid:
-                    item["c"] = int(item[1])+amount
+            for tmp in self.inv["c"][type_]["it"]:
+                if tmp["tid"] == tid and tmp["iid"] == iid:
+                    tmp["c"] = int(item[1])+amount
                     break
         else:
             self.server.redis.sadd(f"uid:{self.uid}:items", name)
