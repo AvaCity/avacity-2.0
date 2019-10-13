@@ -1,6 +1,6 @@
-import logging
 from modules.location import Location, gen_plr
 import const
+import common
 
 class_name = "Outside"
 
@@ -26,8 +26,12 @@ class Outside(Location):
                 break
         room = f"{msg[2]['lid']}_{msg[2]['gid']}_{num}"
         if client.room:
-            logging.error(f"Already in room, uid - {client.uid}")
-            return
+            prefix = common.get_prefix(client.room)
+            for tmp in self.server.online.copy():
+                if tmp.room != client.room or tmp.uid == client.uid:
+                    continue
+                client.send([prefix+".r.lv", {"uid": client.uid}])
+                client.send([client.room, client.uid], type_=17)
         client.room = room
         client.position = (-1.0, -1.0)
         client.action_tag = ""
