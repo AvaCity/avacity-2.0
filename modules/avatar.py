@@ -206,10 +206,11 @@ class Avatar(Module):
         gender = "boy" if appearance["g"] == 1 else "girl"
         crt = 0
         for cloth in clothes:
-            for _category in self.clothes[gender]:
-                for item in self.clothes[gender][_category]:
+            for _category in self.server.clothes[gender]:
+                for item in self.server.clothes[gender][_category]:
                     if item == cloth:
-                        crt += self.clothes[gender][_category][cloth]["rating"]
+                        item = self.server.clothes[gender][_category][cloth]
+                        crt += item["rating"]
                         break
         self.server.redis.set(f"uid:{uid}:crt", crt)
         return crt
