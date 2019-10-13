@@ -93,6 +93,17 @@ async def process_config(version):
                             xml_declaration=True).decode()
     with open(f"{directory}/avatarAppearance/appearance.xml", "w") as f:
         f.write(string)
+    doc = etree.parse(f"{directory}/avatarAppearance/colors.xml",
+                      parser=parser)
+    root = doc.getroot()
+    for el in root.xpath("//*[@salonOnly='1']"):
+        del el.attrib["salonOnly"]
+    for el in root.xpath("//*[@visagistLevel]"):
+        del el.attrib["visagistLevel"]
+    string = etree.tostring(root, pretty_print=True,
+                            xml_declaration=True).decode()
+    with open(f"{directory}/avatarAppearance/colors.xml", "w") as f:
+        f.write(string)
     z = zipfile.ZipFile("files/data/config_all_ru.zip", mode="w")
     for root, dirs, files in os.walk(directory):
         for file in files:
