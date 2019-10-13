@@ -91,11 +91,11 @@ class Server():
         if result[7]:
             crt = int(result[7])
         else:
-            crt = self.update_crt(uid)
+            crt = self.modules["a"].update_crt(uid)
         if result[8]:
             hrt = int(result[8])
         else:
-            hrt = self.update_hrt(uid)
+            hrt = self.modules["frn"].update_hrt(uid)
         if result[9]:
             role = int(result[9])
         else:
@@ -171,14 +171,6 @@ class Server():
                               "y": float(item[1]), "z": float(item[2]),
                               "d": int(item[3]), "lid": int(lid)})
         return items
-
-    def update_crt(self, uid):
-        logging.warning("stub update_crt")
-        return 0
-
-    def update_hrt(self, uid):
-        logging.warning("stub update_hrt")
-        return 0
 
     def _background(self):
         while True:

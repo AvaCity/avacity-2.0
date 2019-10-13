@@ -192,6 +192,28 @@ class Avatar(Module):
                                 apprnc["rg"], apprnc["rc"], apprnc["pt"],
                                 apprnc["pc"], apprnc["bt"], apprnc["bc"])
 
+    def update_crt(self, uid):
+        clothes = []
+        for tmp in self.server.redis.smembers(f"uid:{uid}:items"):
+            if self.server.redis.lindex(f"uid:{uid}:items:{tmp}", 0) == "cls":
+                if "_" in clothes:
+                    clothes.append(tmp.split("_")[0])
+                else:
+                    clothes.append(tmp)
+        appearance = self.server.get_appearance(uid)
+        if not appearance:
+            return 0
+        gender = "boy" if appearance["g"] == 1 else "girl"
+        crt = 0
+        for cloth in clothes:
+            for _category in self.clothes[gender]:
+                for item in self.clothes[gender][_category]:
+                    if item == cloth:
+                        crt += self.clothes[gender][_category][cloth]["rating"]
+                        break
+        self.server.redis.set(f"uid:{uid}:crt", crt)
+        return crt
+
     def get_category(self, cloth, gender):
         for category in self.server.clothes[gender]:
             for item in self.server.clothes[gender][category]:

@@ -37,7 +37,7 @@ class Furniture(Module):
         inv = self.server.inv[uid].get()
         room_inf = self.server.redis.lrange(f"rooms:{uid}:{room[2]}", 0, -1)
         room_items = self.server.get_room_items(uid, room[2])
-        self.server.update_hrt(uid)
+        self.update_hrt(uid)
         ci = gen_plr(client, self.server)["ci"]
         client.send(["frn.save", {"inv": inv, "ci": ci,
                                   "hs": {"f": room_items, "w": 13,
@@ -85,3 +85,15 @@ class Furniture(Module):
             return
         self.server.redis.srem(f"rooms:{uid}:{room}:items", item)
         self.server.redis.delete(f"rooms:{uid}:{room}:items:{item}")
+
+    def update_hrt(self, uid):
+        redis = self.server.redis
+        hrt = 0
+        for room in redis.smembers(f"rooms:{uid}"):
+            for item in redis.smembers(f"rooms:{uid}:{room}:items"):
+                item = item.split("_")[0]
+                if item not in self.frn_list:
+                    continue
+                hrt += self.frn_list[item]["rating"]
+        redis.set(f"uid:{uid}:hrt", hrt)
+        return hrt
