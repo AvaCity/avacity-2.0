@@ -104,6 +104,15 @@ async def process_config(version):
                             xml_declaration=True).decode()
     with open(f"{directory}/avatarAppearance/colors.xml", "w") as f:
         f.write(string)
+    doc = etree.parse(f"{directory}/inventory/stickerPack.xml",
+                      parser=parser)
+    root = doc.getroot()
+    for el in root.xpath("//item"):
+        el.attrib["vipOnly"] = "1"
+    string = etree.tostring(root, pretty_print=True,
+                            xml_declaration=True).decode()
+    with open(f"{directory}/inventory/stickerPack.xml", "w") as f:
+        f.write(string)
     z = zipfile.ZipFile("files/data/config_all_ru.zip", mode="w")
     for root, dirs, files in os.walk(directory):
         for file in files:
