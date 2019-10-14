@@ -8,7 +8,7 @@ class Component(Module):
 
     def __init__(self, server):
         self.server = server
-        self.commands = {"cht": self.chat}
+        self.commands = {"cht": self.chat, "m": self.moderation}
 
     def chat(self, msg, client):
         subcommand = msg[1].split(".")[2]
@@ -25,3 +25,14 @@ class Component(Module):
                 for tmp in self.server.online.copy():
                     if tmp.room == msg[1]["rid"]:
                         tmp.send(msg)
+
+    def moderation(self, msg, client):
+        subcommand = msg[1].split(".")[2]
+        if subcommand == "ar":  # access request
+            user_data = self.server.get_user_data(client.uid)
+            if user_data["role"] > 0:
+                success = True
+            else:
+                success = False
+            client.send(["cp.m.ar", {"pvlg": msg[2]["pvlg"],
+                                     "sccss": success}])
