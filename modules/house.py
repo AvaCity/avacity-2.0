@@ -10,7 +10,9 @@ class House(Location):
 
     def __init__(self, server):
         super().__init__(server)
-        self.commands.update({"minfo": self.get_my_info, "gr": self.get_room})
+        self.commands.update({"minfo": self.get_my_info, "gr": self.get_room,
+                              "oinfo": self.owner_info,
+                              "ioinfo": self.init_owner_info})
 
     def get_my_info(self, msg, client):
         apprnc = self.server.get_appearance(client.uid)
@@ -37,6 +39,27 @@ class House(Location):
                       "emd": user_data["emd"], "gld": user_data["gld"]}
         client.send(["h.minfo", {"plr": plr, "tm": 1}])
         self._perform_login(client)
+
+    def owner_info(self, msg, client):
+        if not msg[2]["uid"]:
+            return
+        plr = gen_plr(msg[2]["uid"], self.server)
+        rooms = []
+        tmp = self.server.redis.smembers(f"rooms:{msg[2]['uid']}")
+        for item in tmp:
+            room = self.server.redis.lrange(f"rooms:{msg[2]['uid']}:{item}",
+                                            0, -1)
+            room_items = self.server.get_room_items(msg[2]["uid"], item)
+            rooms.append({"f": room_items, "w": 13, "l": 13, "id": item,
+                          "lev": int(room[1]), "nm": room[0]})
+            client.send(["h.oinfo", {"ath": False, "plr": plr,
+                                     "hs": {"r": rooms, "lt": 0}}])
+
+    def init_owner_info(self, msg, client):
+        if not msg[2]["uid"]:
+            return
+        plr = gen_plr(msg[2]["uid"], self.server)
+        client.send("h.ioinfo", {"tids": [], "ath": False, "plr": plr})
 
     def get_room(self, msg, client):
         room = f"{msg[2]['lid']}_{msg[2]['gid']}_{msg[2]['rid']}"

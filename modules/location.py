@@ -1,5 +1,6 @@
 import logging
 from modules.base_module import Module
+from client import Client
 import common
 
 
@@ -34,16 +35,21 @@ class Location(Module):
 
 
 def gen_plr(client, server):
-    user_data = server.get_user_data(client.uid)
-    apprnc = server.get_appearance(client.uid)
-    clths = server.get_clothes(client.uid, type_=2)
-    plr = {"uid": client.uid, "apprnc": apprnc, "clths": clths,
+    if isinstance(client, Client):
+        uid = client.uid
+    else:
+        uid = client
+    user_data = server.get_user_data(uid)
+    apprnc = server.get_appearance(uid)
+    clths = server.get_clothes(uid, type_=2)
+    plr = {"uid": uid, "apprnc": apprnc, "clths": clths,
            "mbm": {"ac": None, "sk": "blackMobileSkin"},
            "usrinf": {"rl": user_data["role"]}}
-    plr["locinfo"] = {"st": 0, "s": "127.0.0.1", "at": client.action_tag,
-                      "d": client.dimension, "x": client.position[0],
-                      "y": client.position[1], "shlc": True, "pl": "",
-                      "l": client.room}
+    if isinstance(client, Client):
+        plr["locinfo"] = {"st": 0, "s": "127.0.0.1", "at": client.action_tag,
+                          "d": client.dimension, "x": client.position[0],
+                          "y": client.position[1], "shlc": True, "pl": "",
+                          "l": client.room}
     plr["ci"] = {"exp": user_data["exp"], "crt": user_data["crt"],
                  "hrt": user_data["hrt"], "fexp": 0, "gdc": 0, "lgt": 0,
                  "vip": True, "vexp": 1965298000, "vsexp": 1965298000,
