@@ -11,7 +11,8 @@ from parser import Parser
 
 modules = ["client_error", "house", "outside", "user_rating", "mail", "avatar",
            "location_game", "relations", "social_request", "user_rating",
-           "competition", "furniture", "billing", "component", "support"]
+           "competition", "furniture", "billing", "component", "support",
+           "passport"]
 
 
 class Server():
