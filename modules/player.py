@@ -13,5 +13,8 @@ class Player(Module):
     def players_by_id(self, msg, client):
         players = []
         for uid in msg[2]["uids"]:
-            players.append(gen_plr(uid, self.server))
+            plr = gen_plr(uid, self.server)
+            if not plr:
+                continue
+            players.append(plr)
         client.send(["pl.get", {"plrs": players, "clid": msg[2]["clid"]}])

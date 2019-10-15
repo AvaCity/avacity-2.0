@@ -39,8 +39,10 @@ def gen_plr(client, server):
         uid = client.uid
     else:
         uid = client
-    user_data = server.get_user_data(uid)
     apprnc = server.get_appearance(uid)
+    if not apprnc:
+        return None
+    user_data = server.get_user_data(uid)
     clths = server.get_clothes(uid, type_=2)
     plr = {"uid": uid, "apprnc": apprnc, "clths": clths,
            "mbm": {"ac": None, "sk": "blackMobileSkin"},

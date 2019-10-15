@@ -16,8 +16,8 @@ class UserRating(Module):
         max_uid = int(self.server.redis.get("uids"))
         for i in range(1, max_uid+1):
             hrt = self.server.redis.get(f"uid:{i}:hrt")
-            if not hrt:
-                continue
+            if not hrt or not self.server.get_appearance(i):
+                continue  # check for not created avatar
             users[i] = int(hrt)
         sorted_users = sorted(users.items(), key=operator.itemgetter(1),
                               reverse=True)
