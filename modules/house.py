@@ -52,8 +52,8 @@ class House(Location):
             room_items = self.server.get_room_items(msg[2]["uid"], item)
             rooms.append({"f": room_items, "w": 13, "l": 13, "id": item,
                           "lev": int(room[1]), "nm": room[0]})
-            client.send(["h.oinfo", {"ath": False, "plr": plr,
-                                     "hs": {"r": rooms, "lt": 0}}])
+        client.send(["h.oinfo", {"ath": False, "plr": plr,
+                                 "hs": {"r": rooms, "lt": 0}}])
 
     def init_owner_info(self, msg, client):
         if not msg[2]["uid"]:
