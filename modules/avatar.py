@@ -47,6 +47,9 @@ class Avatar(Module):
                 for item in const.room_items:
                     self.server.modules["frn"].add_item(item, "livingroom",
                                                         client.uid)
+                    for i in range(1, 6):
+                        self.server.modules["frn"].add_item(item, str(i),
+                                                            client.uid)
             else:
                 if apprnc["g"] != current_apprnc["g"]:
                     logging.error("gender doesn't match!")
