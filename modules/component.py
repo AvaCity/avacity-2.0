@@ -9,6 +9,7 @@ class Component(Module):
     def __init__(self, server):
         self.server = server
         self.commands = {"cht": self.chat, "m": self.moderation}
+        self.priveleges = self.server.parser.parse_priveleges()
 
     def chat(self, msg, client):
         subcommand = msg[1].split(".")[2]
@@ -30,7 +31,7 @@ class Component(Module):
         subcommand = msg[1].split(".")[2]
         if subcommand == "ar":  # access request
             user_data = self.server.get_user_data(client.uid)
-            if user_data["role"] > 0:
+            if user_data["role"] >= self.priveleges[msg[2]["pvlg"]]:
                 success = True
             else:
                 success = False

@@ -61,3 +61,11 @@ class Parser():
             conflicts.append([rule.attrib["category1"],
                               rule.attrib["category2"]])
         return conflicts
+
+    def parse_priveleges(self):
+        doc = etree.parse("config_all_ru/modules/acl.xml", parser=self.parser)
+        root = doc.getroot()
+        priveleges = {}
+        for item in root.findall(".//privilege"):
+            priveleges[item.attrib["name"]] = int(item.attrib["minAuthority"])
+        return priveleges
