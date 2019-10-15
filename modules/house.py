@@ -34,7 +34,7 @@ class House(Location):
             tr[item] = {"trrt": 0, "trcd": 0, "trid": item}
         plr = gen_plr(client, self.server)
         plr.update({"cs": cs, "hs": {"r": rooms, "lt": 0}, "inv": inv,
-                    "onl": True})
+                    "onl": True, "achc": {"ac": {}, "tr": tr}})
         plr["res"] = {"slvr": user_data["slvr"], "enrg": user_data["enrg"],
                       "emd": user_data["emd"], "gld": user_data["gld"]}
         client.send(["h.minfo", {"plr": plr, "tm": 1}])
