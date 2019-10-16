@@ -45,7 +45,7 @@ def encodeValue(data, forDict=False):
         final_data.append(f"int:8={int(data)}")
     elif isinstance(data, int):
         if data > 2147483647:
-            final_data.append("int:8:3")
+            final_data.append("int:8=3")
             final_data.append(f"int:64={data}")
         else:
             final_data.append("int:8=2")
