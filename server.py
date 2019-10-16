@@ -21,7 +21,6 @@ class Server():
         self.inv = {}
         self.redis = redis.Redis(decode_responses=True)
         self.parser = Parser()
-        self.clothes = self.parser.parse_clothes()
         self.conflicts = self.parser.parse_conflicts()
         self.modules = {}
         for item in modules:

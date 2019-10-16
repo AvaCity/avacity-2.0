@@ -13,6 +13,7 @@ class Avatar(Module):
     def __init__(self, server):
         self.server = server
         self.commands = {"apprnc": self.appearance, "clths": self.clothes}
+        self.clothes_list = server.parser.parse_clothes()
 
     def appearance(self, msg, client):
         subcommand = msg[1].split(".")[2]
@@ -106,7 +107,7 @@ class Avatar(Module):
         category = self.get_category(cloth, gender)
         if not category:
             return
-        attrs = self.server.clothes[gender][category][cloth]
+        attrs = self.clothes_list[gender][category][cloth]
         user_data = self.server.get_user_data(client.uid)
         if user_data["gld"] < attrs["gold"] or \
            user_data["slvr"] < attrs["silver"]:
@@ -147,10 +148,10 @@ class Avatar(Module):
             clid = item["clid"]
             if f"{cloth}_{clid}" in items or cloth in items:
                 continue
-            for category in self.server.clothes[gender]:
-                for item in self.server.clothes[gender][category]:
+            for category in self.clothes_list[gender]:
+                for item in self.clothes_list[gender][category]:
                     if item == cloth:
-                        tmp = self.server.clothes[gender][category][item]
+                        tmp = self.clothes_list[gender][category][item]
                         gold += tmp["gold"]
                         silver += tmp["silver"]
                         rating += tmp["rating"]
@@ -209,18 +210,18 @@ class Avatar(Module):
         gender = "boy" if appearance["g"] == 1 else "girl"
         crt = 0
         for cloth in clothes:
-            for _category in self.server.clothes[gender]:
-                for item in self.server.clothes[gender][_category]:
+            for _category in self.clothes_list[gender]:
+                for item in self.clothes_list[gender][_category]:
                     if item == cloth:
-                        item = self.server.clothes[gender][_category][cloth]
+                        item = self.clothes_list[gender][_category][cloth]
                         crt += item["rating"]
                         break
         self.server.redis.set(f"uid:{uid}:crt", crt)
         return crt
 
     def get_category(self, cloth, gender):
-        for category in self.server.clothes[gender]:
-            for item in self.server.clothes[gender][category]:
+        for category in self.clothes_list[gender]:
+            for item in self.clothes_list[gender][category]:
                 if item == cloth:
                     return category
         return None
