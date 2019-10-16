@@ -24,7 +24,7 @@ class Inventory():
                 logging.error("Can't be more than one cloth")
                 return
             self.server.redis.lset(f"uid:{self.uid}:items:{name}", 1,
-                                    int(item[1])+amount)
+                                   int(item[1])+amount)
             for tmp in self.inv["c"][type_]["it"]:
                 if tmp["tid"] == tid and tmp["iid"] == iid:
                     tmp["c"] = int(item[1])+amount
@@ -141,16 +141,14 @@ class Inventory():
                 self.change_wearing(weared_cloth, False)
 
     def _has_conflict(self, cloth, category, gender):
-        for weared_category in self.server.clothes[gender]:
-            for item in self.server.clothes[gender][weared_category]:
-                if item == cloth:
-                    if weared_category == category:
-                        return True
-                    else:
-                        for conflict in self.server.conflicts:
-                            if (conflict[0] == category and
-                               conflict[1] == weared_category) or \
-                               (conflict[1] == category and
-                               conflict[0] == weared_category):
-                                return True
+        get_category = self.server.modules["a"].get_category
+        cloth_category = get_category(cloth, gender)
+        if cloth_category == category:
+            return True
+        for conflict in self.server.conflicts:
+            if (conflict[0] == category and
+                conflict[1] == cloth_category) or \
+               (conflict[1] == category and
+               conflict[0] == cloth_category):
+                return True
         return False
