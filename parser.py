@@ -35,6 +35,19 @@ class Parser():
                     tmp[name][attr] = 0
         return tmp
 
+    def parse_cloth_sets(self):
+        doc = etree.parse("config_all_ru/inventory/extend/clothesSets.xml",
+                          parser=self.parser)
+        root = doc.getroot()
+        sets = {"boy": {}, "girl": {}}
+        for set_ in root.findall(".//clothesSet"):
+            id_ = set_.attrib["id"]
+            gender = set_.attrib["gender"]
+            sets[gender][id_] = []
+            for item in set_.findall("item"):
+                sets[gender][id_].append(item.attrib["itemId"])
+        return sets
+
     def parse_furniture(self):
         furniture = {}
         for filename in ["furniture.xml", "kitchen.xml", "bathroom.xml",

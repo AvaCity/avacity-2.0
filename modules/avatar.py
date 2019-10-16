@@ -14,6 +14,7 @@ class Avatar(Module):
         self.server = server
         self.commands = {"apprnc": self.appearance, "clths": self.clothes}
         self.clothes_list = server.parser.parse_clothes()
+        self.sets = server.parser.parse_cloth_sets()
 
     def appearance(self, msg, client):
         subcommand = msg[1].split(".")[2]
@@ -65,6 +66,8 @@ class Avatar(Module):
             self.wear_cloth(msg[2]["clths"], client)
         elif subcommand == "buy":
             self.buy_cloth(msg[2]["tpid"], client)
+        elif subcommand == "bst":
+            self.buy_clothes_suit(msg[2]["tpid"], client)
         elif subcommand == "bcc":
             self.buy_colored_clothes(msg[2]["clths"], client)
         else:
@@ -120,6 +123,57 @@ class Avatar(Module):
                               user_data["crt"] + attrs["rating"])
         self.server.inv[client.uid].add_item(cloth, "cls")
         self.server.inv[client.uid].change_wearing(cloth, True)
+        inv = self.server.inv[client.uid].get()
+        clths = self.server.get_clothes(client.uid, type_=2)
+        ccltn = self.server.get_clothes(client.uid, type_=1)
+        ccltn = ccltn["ccltns"]["casual"]
+        user_data = self.server.get_user_data(client.uid)
+        client.send(["a.clths.buy", {"inv": inv,
+                                     "res": {"slvr": user_data["slvr"],
+                                             "enrg": user_data["enrg"],
+                                             "emd": user_data["emd"],
+                                             "gld": user_data["gld"]},
+                                     "clths": clths, "ccltn": ccltn,
+                                     "crt": user_data["crt"]}])
+
+    def buy_clothes_suit(self, tpid, client):
+        if self.server.get_appearance(client.uid)["g"] == 1:
+            gender = "boy"
+        else:
+            gender = "girl"
+        if tpid not in self.sets[gender]:
+            logging.error(f"Set {tpid} not found")
+            return
+        gold = 0
+        silver = 0
+        rating = 0
+        items = self.server.redis.smembers(f"uid:{client.uid}:items")
+        to_buy = []
+        for cloth in self.sets[gender][tpid]:
+            if ":" in cloth:
+                cloth = cloth.replace(":", "_")
+            if cloth in items:
+                continue
+            category = self.get_category(cloth, gender)
+            if not category:
+                continue
+            attrs = self.clothes_list[gender][category][cloth]
+            gold += attrs["gold"]
+            silver += attrs["silver"]
+            rating += attrs["rating"]
+            to_buy.append(cloth)
+        user_data = self.server.get_user_data(client.uid)
+        if user_data["gld"] < gold or user_data["slvr"] < silver:
+            return
+        self.server.redis.set(f"uid:{client.uid}:gld",
+                              user_data["gld"] - gold)
+        self.server.redis.set(f"uid:{client.uid}:slvr",
+                              user_data["slvr"] - silver)
+        self.server.redis.set(f"uid:{client.uid}:crt",
+                              user_data["crt"] + rating)
+        for cloth in to_buy:
+            self.server.inv[client.uid].add_item(cloth, "cls")
+            self.server.inv[client.uid].change_wearing(cloth, True)
         inv = self.server.inv[client.uid].get()
         clths = self.server.get_clothes(client.uid, type_=2)
         ccltn = self.server.get_clothes(client.uid, type_=1)
