@@ -274,6 +274,8 @@ class Avatar(Module):
         return crt
 
     def get_category(self, cloth, gender):
+        if "_" in cloth:
+            cloth = cloth.split("_")[0]
         for category in self.clothes_list[gender]:
             for item in self.clothes_list[gender][category]:
                 if item == cloth:
