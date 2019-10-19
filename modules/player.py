@@ -8,7 +8,8 @@ class Player(Module):
 
     def __init__(self, server):
         self.server = server
-        self.commands = {"gid": self.players_by_id, "flw": self.follow}
+        self.commands = {"gid": self.players_by_id, "flw": self.follow,
+                         "gos": self.get_online_statuses}
 
     def players_by_id(self, msg, client):
         players = []
@@ -33,3 +34,13 @@ class Player(Module):
             locinfo = {"st": 0, "s": "127.0.0.1", "at": None, "d": 0, "x": -1.0,
                        "y": -1.0, "shlc": True, "pl": "", "l": tmp.room}
         client.send(["pl.flw", {"scs": scs, "locinfo": locinfo}])
+
+    def get_online_statuses(self, msg, client):
+        online = {}
+        for uid in msg[2]["uids"]:
+            online[uid] = False
+            for tmp in self.server.online.copy():
+                if tmp.uid == uid:
+                    online[uid] = True
+                    break
+        client.send(["pl.gos", {"clid": msg[2]["clid"], "onl": online}])
