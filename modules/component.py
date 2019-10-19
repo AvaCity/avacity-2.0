@@ -8,7 +8,8 @@ class Component(Module):
 
     def __init__(self, server):
         self.server = server
-        self.commands = {"cht": self.chat, "m": self.moderation}
+        self.commands = {"cht": self.chat, "m": self.moderation,
+                         "ms": self.message}
         self.priveleges = self.server.parser.parse_priveleges()
 
     def chat(self, msg, client):
@@ -40,6 +41,23 @@ class Component(Module):
                 success = False
             client.send(["cp.m.ar", {"pvlg": msg[2]["pvlg"],
                                      "sccss": success}])
+
+    def message(self, msg, client):
+        subcommand = msg[1].split(".")[2]
+        if subcommand == "smm":  # send moderator message
+            user_data = self.server.get_user_data(client.uid)
+            if user_data["role"] < self.priveleges["MESSAGE_TO_USER"]:
+                return
+            uid = msg[2]["rcpnts"]
+            message = msg[2]["txt"]
+            sccss = False
+            for tmp in self.server.online.copy():
+                if tmp.uid == uid:
+                    tmp.send(["cp.ms.rmm", {"sndr": client.uid,
+                                            "txt": message}])
+                    sccss = True
+                    break
+            client.send(["cp.ms.smm", {"sccss": sccss}])
 
     def system_command(self, msg, client):
         command = msg[1:]
