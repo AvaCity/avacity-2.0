@@ -1,5 +1,6 @@
 import importlib
 import threading
+import subprocess
 import socket
 import logging
 import time
@@ -15,6 +16,14 @@ modules = ["client_error", "house", "outside", "user_rating", "mail", "avatar",
            "passport", "player"]
 
 
+def get_git_revision_short_hash():
+    try:
+        return subprocess.check_output(['git', 'rev-parse',
+                                        '--short', 'HEAD']).strip().decode()
+    except FileNotFoundError:
+        return "Unknown"
+
+
 class Server():
     def __init__(self, host="0.0.0.0", port=8123):
         self.online = []
@@ -27,6 +36,7 @@ class Server():
             module = importlib.import_module(f"modules.{item}")
             class_ = getattr(module, module.class_name)
             self.modules[class_.prefix] = class_(self)
+        self.revision = get_git_revision_short_hash()
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.sock.bind((host, port))

@@ -18,7 +18,8 @@ class Support(Module):
     def get_social_channels(self, msg, client):
         channels = []
         channels.append({"act": True, "prt": 1, "id": 1, "stid": "github",
-                         "dsctn": "Поставьте звёздочку ;(", "ttl": "GitHub",
-                         "icnurl": icon,
+                         "dsctn": f"Поставьте звёздочку ;(\n"
+                         f"Ревизия: {self.server.revision}",
+                         "ttl": "GitHub", "icnurl": icon,
                          "lnk": "https://github.com/AvaCity/avacity-2.0"})
         client.send(["spt.gscnl", {"scls": channels}])
