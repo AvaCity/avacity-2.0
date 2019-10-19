@@ -19,6 +19,42 @@ class Furniture(Module):
             return
         for item in msg[2]["f"]:
             items = self.server.redis.smembers(f"rooms:{uid}:{room[2]}:items")
+            if item["t"] == 0:
+                if not self.server.inv[uid].take_item(item["tpid"]):
+                    continue
+                if any(ext in item["tpid"].lower()
+                       for ext in ["wll", "wall"]):
+                    walls = []
+                    for wall in ["wall", "wll"]:
+                        for room_item in items:
+                            if wall in room_item.lower():
+                                self.del_item(room_item, room[2], uid)
+                                tmp = room_item.split("_")[0]
+                                if tmp not in walls:
+                                    walls.append(tmp)
+                                    self.server.inv[uid].add_item(tmp, "frn")
+                    item["x"] = 0.0
+                    item["y"] = 0.0
+                    item["z"] = 0.0
+                    item["d"] = 3
+                    self.add_item(item, room[2], uid)
+                    item["x"] = 13.0
+                    item["d"] = 5
+                    item["oid"] += 1
+                    self.add_item(item, room[2], uid)
+                elif any(ext in item["tpid"].lower()
+                         for ext in ["flr", "floor"]):
+                    for floor in ["flr", "floor"]:
+                        for room_item in items:
+                            if floor in room_item.lower():
+                                self.del_item(room_item, room[2], uid)
+                                tmp = room_item.split("_")[0]
+                                self.server.inv[uid].add_item(tmp, "frn")
+                    item["x"] = 0.0
+                    item["y"] = 0.0
+                    item["z"] = 0.0
+                    item["d"] = 5
+                    self.add_item(item, room[2], uid)
             if item["t"] == 1:
                 name = f"{item['tpid']}_{item['oid']}"
                 if name in items:
