@@ -1,6 +1,4 @@
 import asyncio
-import string
-import random
 import base64
 import configparser
 import redis
@@ -10,6 +8,7 @@ import aiohttp_jinja2
 import jinja2
 from cryptography import fernet
 from aiohttp_session.cookie_storage import EncryptedCookieStorage
+import utils.bot_common
 
 routes = web.RouteTableDef()
 routes.static("/files", "files")
@@ -19,6 +18,10 @@ xml = """<?xml version="1.0" ?>
 </cross-domain-policy>"""
 config = configparser.ConfigParser()
 config.read("web.ini")
+if config["webserver"]["allow_reg"].lower() == "true":
+    registation = True
+else:
+    registation = False
 
 
 def get_level(exp):
@@ -28,11 +31,6 @@ def get_level(exp):
         i += 1
         expSum += i * 50
     return i
-
-
-def random_string(string_length=20):
-    letters = string.ascii_letters
-    return ''.join(random.choice(letters) for i in range(string_length))
 
 
 @routes.get("/")
@@ -71,29 +69,9 @@ async def logout(request):
 
 @routes.get("/register")
 async def register(request):
-    app["redis"].incr("uids")
-    uid = app["redis"].get("uids")
-    while True:
-        password = random_string()
-        if app["redis"].get(f"auth:{password}"):
-            continue
-        break
-    pipe = app["redis"].pipeline()
-    pipe.set(f"auth:{password}", uid)
-    pipe.set(f"uid:{uid}:slvr", 1000)
-    pipe.set(f"uid:{uid}:enrg", 100)
-    pipe.set(f"uid:{uid}:gld", 6)
-    pipe.set(f"uid:{uid}:exp", 500000)
-    pipe.set(f"uid:{uid}:emd", 0)
-    pipe.set(f"uid:{uid}:lvt", 0)
-    pipe.sadd(f"uid:{uid}:items", "blackMobileSkin")
-    pipe.rpush(f"uid:{uid}:items:blackMobileSkin", "gm", 1)
-    pipe.sadd(f"rooms:{uid}", "livingroom")
-    pipe.rpush(f"rooms:{uid}:livingroom", "#livingRoom", 1)
-    for i in range(1, 6):
-        pipe.sadd(f"rooms:{uid}", i)
-        pipe.rpush(f"rooms:{uid}:{i}", f"#room{i}", 2)
-    pipe.execute()
+    if not registation:
+        return web.Response(text="Регистрация отключена")
+    uid, password = utils.bot_common.new_account(app["redis"])
     return web.Response(text=f"Аккаунт создан, ваш логин - {uid}, "
                              f"пароль - {password}")
 
