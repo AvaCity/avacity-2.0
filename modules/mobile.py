@@ -10,8 +10,17 @@ class Mobile(Module):
         self.commands = {"mkslf": self.make_selfie}
 
     def make_selfie(self, msg, client):
-        if not self.server.inv[client.uid].take_item("film"):
+        amount = 1
+        if msg[2]["stg"]:
+            amount += 1
+        if not self.server.inv[client.uid].take_item("film", amount):
             return
+        cnt = self.server.redis.lindex(f"uid:{client.uid}:items:film", 1)
+        if cnt:
+            cnt = int(cnt)
+        else:
+            cnt = 0
+        client.send(["ntf.inv", {"it": {"c": cnt, "lid": "", "tid": "film"}}])
         client.send(["mb.mkslf", {"sow": client.uid, "stg": msg[2]["stg"],
                                   "zm": msg[2]["zm"]}])
         if msg[2]["stg"]:
