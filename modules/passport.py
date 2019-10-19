@@ -24,5 +24,5 @@ class Passport(Module):
         for item in tr:
             tr_[item] = {"trrt": 0, "trcd": 0, "trid": item}
         client.send(["psp.psp", {"psp": {"uid": msg[2]["uid"],
-                                         "ach": {"ac": {}, "tr": tr},
+                                         "ach": {"ac": {}, "tr": tr_},
                                          "rel": {}}}])
