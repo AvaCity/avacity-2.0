@@ -82,3 +82,18 @@ class Parser():
         for item in root.findall(".//privilege"):
             priveleges[item.attrib["name"]] = int(item.attrib["minAuthority"])
         return priveleges
+
+    def parse_game_items(self):
+        doc = etree.parse("config_all_ru/inventory/game.xml",
+                          parser=self.parser)
+        root = doc.getroot()
+        items = {}
+        for item in root.findall(".//item"):
+            name = item.attrib["id"]
+            items[name] = {}
+            for attr in ["gold", "silver"]:
+                if attr in item.attrib:
+                    items[name][attr] = int(item.attrib[attr])
+                else:
+                    items[name][attr] = 0
+        return items
