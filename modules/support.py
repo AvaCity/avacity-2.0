@@ -1,4 +1,5 @@
 from modules.base_module import Module
+from modules.location import refresh_avatar
 
 icon = "https://raw.githubusercontent.com/AvaCity/avacity-2.0/master/" \
        "readme/star.png"
@@ -10,7 +11,8 @@ class Support(Module):
 
     def __init__(self, server):
         self.server = server
-        self.commands = {"init": self.init, "gscnl": self.get_social_channels}
+        self.commands = {"init": self.init, "gscnl": self.get_social_channels,
+                         "rsnm": self.reset_avatar_name}
 
     def init(self, msg, client):
         client.send(["spt.init", {"a": False}])
@@ -23,3 +25,18 @@ class Support(Module):
                          "ttl": "GitHub", "icnurl": icon,
                          "lnk": "https://github.com/AvaCity/avacity-2.0"})
         client.send(["spt.gscnl", {"scls": channels}])
+
+    def reset_avatar_name(self, msg, client):
+        priveleges = self.server.modules["cp"].priveleges
+        user_data = self.server.get_user_data(client.uid)
+        if user_data["role"] < priveleges["RENAME_AVATAR"]:
+            return
+        uid = str(msg[2]["uid"])
+        name = msg[2]["n"]
+        if not self.server.redis.lindex(f"uid:{uid}:appearance", 0):
+            return
+        self.server.redis.lset(f"uid:{uid}:appearance", 0, name)
+        for tmp in self.server.online.copy():
+            if tmp.uid == uid:
+                refresh_avatar(tmp, self.server)
+                break
