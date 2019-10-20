@@ -110,11 +110,15 @@ class Furniture(Module):
             return
         data = self.server.redis.lrange(f"rooms:{uid}:{room[2]}:items:{found}",
                                         0, -1)
+        if len(data) < 5:
+            rid = None
+        else:
+            rid = data[4]
         self.del_item(found, room[2], uid)
         self.server.inv[uid].add_item(found.split("_")[0], "frn")
         item.update({"x": float(data[0]), "y": float(data[1]),
                      "z": float(data[2]), "d": int(data[3]),
-                     "rid": data[4]})
+                     "rid": rid})
         self.add_item(item, room[2], uid)
 
     def buy(self, msg, client):
