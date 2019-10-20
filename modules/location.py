@@ -48,10 +48,10 @@ def gen_plr(client, server):
            "mbm": {"ac": None, "sk": "blackMobileSkin"},
            "usrinf": {"rl": user_data["role"]}}
     if isinstance(client, Client):
-        plr["locinfo"] = {"st": 0, "s": "127.0.0.1", "at": client.action_tag,
-                          "d": client.dimension, "x": client.position[0],
-                          "y": client.position[1], "shlc": True, "pl": "",
-                          "l": client.room}
+        plr["locinfo"] = {"st": client.state, "s": "127.0.0.1",
+                          "at": client.action_tag, "d": client.dimension,
+                          "x": client.position[0], "y": client.position[1],
+                          "shlc": True, "pl": "", "l": client.room}
     plr["ci"] = {"exp": user_data["exp"], "crt": user_data["crt"],
                  "hrt": user_data["hrt"], "fexp": 0, "gdc": 0, "lgt": 0,
                  "vip": True, "vexp": 1965298000, "vsexp": 1965298000,
