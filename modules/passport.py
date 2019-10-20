@@ -1,5 +1,4 @@
 from modules.base_module import Module
-from const import tr
 
 class_name = "Passport"
 
