@@ -30,8 +30,8 @@ class Outside(Location):
             for tmp in self.server.online.copy():
                 if tmp.room != client.room or tmp.uid == client.uid:
                     continue
-                client.send([prefix+".r.lv", {"uid": client.uid}])
-                client.send([client.room, client.uid], type_=17)
+                tmp.send([prefix+".r.lv", {"uid": client.uid}])
+                tmp.send([client.room, client.uid], type_=17)
         client.room = room
         client.position = (-1.0, -1.0)
         client.action_tag = ""
