@@ -42,6 +42,7 @@ def reset_account(redis, uid):
     pipe.delete(f"uid:{uid}:trid")
     pipe.delete(f"uid:{uid}:crt")
     pipe.delete(f"uid:{uid}:hrt")
+    pipe.delete(f"uid:{uid}:wearing")
     pipe.delete(f"uid:{uid}:appearance")
     for item in redis.smembers(f"uid:{uid}:items"):
         pipe.delete(f"uid:{uid}:items:{item}")
