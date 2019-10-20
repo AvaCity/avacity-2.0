@@ -135,6 +135,7 @@ class Furniture(Module):
         self.server.redis.set(f"uid:{uid}:gld", user_data["gld"] - gold)
         self.server.redis.set(f"uid:{uid}:slvr", user_data["slvr"] - silver)
         self.server.inv[uid].add_item(item, "frn", amount)
+        amount = int(redis.lindex(f"uid:{client.uid}:items:{item}", 1))
         client.send(["ntf.inv", {"it": {"c": amount, "iid": "", "tid": item}}])
         user_data = self.server.get_user_data(uid)
         client.send(["ntf.res", {"res": {"gld": user_data["gld"],
