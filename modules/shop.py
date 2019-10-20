@@ -14,10 +14,10 @@ class Shop(Module):
     def buy_joke_item(self, msg, client):
         item = msg[2]["tpid"]
         cnt = msg[2]["cnt"]
-        if item not in self.items:
+        if item not in self.items["game"]:
             return
-        gold = self.items[item]["gold"]*cnt
-        silver = self.items[item]["silver"]*cnt
+        gold = self.items["game"][item]["gold"]*cnt
+        silver = self.items["game"][item]["silver"]*cnt
         user_data = self.server.get_user_data(client.uid)
         if user_data["gld"] < gold or user_data["slvr"] < silver:
             return

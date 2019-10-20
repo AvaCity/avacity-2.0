@@ -88,14 +88,17 @@ class Parser():
                           parser=self.parser)
         root = doc.getroot()
         items = {}
-        for item in root.findall(".//item"):
-            name = item.attrib["id"]
-            items[name] = {}
-            for attr in ["gold", "silver"]:
-                if attr in item.attrib:
-                    items[name][attr] = int(item.attrib[attr])
-                else:
-                    items[name][attr] = 0
+        for category in root.findall(".//category"):
+            cat_name = category.attrib["id"]
+            items[cat_name] = {}
+            for item in category.findall(".//item"):
+                name = item.attrib["id"]
+                items[cat_name][name] = {}
+                for attr in ["gold", "silver"]:
+                    if attr in item.attrib:
+                        items[cat_name][name][attr] = int(item.attrib[attr])
+                    else:
+                        items[cat_name][name][attr] = 0
         return items
 
     def parse_achievements(self):
@@ -115,3 +118,15 @@ class Parser():
         for item in root.findall(".//trophy"):
             tr.append(item.attrib["id"])
         return tr
+
+    def parse_craft(self):
+        doc = etree.parse("config_all_ru/modules/craft.xml",
+                          parser=self.parser)
+        root = doc.getroot()
+        items = {}
+        for item in root.findall(".//craftedItem"):
+            id_ = item.attrib["itemId"]
+            items[id_] = {}
+            for tmp in item.findall("component"):
+                items[id_][tmp.attrib["itemId"]] = int(tmp.attrib["count"])
+        return items
