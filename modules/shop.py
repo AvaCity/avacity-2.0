@@ -25,6 +25,7 @@ class Shop(Module):
         redis.set(f"uid:{client.uid}:gld", user_data["gld"]-gold)
         redis.set(f"uid:{client.uid}:slvr", user_data["slvr"]-silver)
         self.server.inv[client.uid].add_item(item, "gm", cnt)
+        cnt = int(redis.lindex(f"uid:{client.uid}:items:{item}", 1))
         client.send(["ntf.inv", {"it": {"c": cnt, "lid": "", "tid": item}}])
         user_data = self.server.get_user_data(client.uid)
         client.send(["ntf.res", {"res": {"gld": user_data["gld"],
