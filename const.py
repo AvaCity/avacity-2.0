@@ -17,16 +17,6 @@ room_items = [{"tpid": "wall15", "d": 3, "oid": 1, "x": 0.0, "y": 0.0,
                "z": 0.0},
               {"tpid": "door4", "d": 3, "oid": 4, "x": 3.0, "y": 0.0,
                "z": 0.0, "rid": "outside"}]
-tr = ["yearAvatar", "activityPlace1", "activityPlace2", "activityPlace3",
-      "firstApril16Place1", "firstApril16Place2", "firstApril16Place3",
-      "firstApril16Place4", "firstApril16Place5", "avaBirthdayTrophy2016",
-      "familyDay2016", "halloween2016", "newYear2017", "freelanceCup",
-      "freelanceExchange", "freelanceJournal", "freelanceMicrophone",
-      "freelanceModerator", "freelanceSupport", "freelanceTwitterInstagram",
-      "freelanceVideo", "springDay2017", "halloween2017", "newYear2018",
-      "snowboardPlace1", "snowboardPlace2", "snowboardPlace3", "stVal2018",
-      "springDay2018", "firstApril2018", "avatarBirthday", "weddingDay",
-      "halloween2018", "newYear2019", "dzo2019", "firstApril2019"]
 campaigns = []
 
 clans = False

@@ -31,6 +31,8 @@ class Server():
         self.redis = redis.Redis(decode_responses=True)
         self.parser = Parser()
         self.conflicts = self.parser.parse_conflicts()
+        self.achievements = self.parser.parse_achievements()
+        self.trophies = self.parser.parse_trophies()
         self.modules = {}
         for item in modules:
             module = importlib.import_module(f"modules.{item}")

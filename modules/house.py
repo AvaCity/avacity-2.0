@@ -29,12 +29,15 @@ class House(Location):
             rooms.append({"f": self.server.get_room_items(client.uid, item),
                           "w": 13, "id": item, "lev": int(room[1]), "l": 13,
                           "nm": room[0]})
+        ac = {}
+        for item in self.server.achievements:
+            ac[item] = {"p": 0, "nWct": 0, "l": 3, "aId": item}
         tr = {}
-        for item in const.tr:
+        for item in self.server.trophies:
             tr[item] = {"trrt": 0, "trcd": 0, "trid": item}
         plr = gen_plr(client, self.server)
         plr.update({"cs": cs, "hs": {"r": rooms, "lt": 0}, "inv": inv,
-                    "onl": True, "achc": {"ac": {}, "tr": tr}})
+                    "onl": True, "achc": {"ac": ac, "tr": tr}})
         plr["res"] = {"slvr": user_data["slvr"], "enrg": user_data["enrg"],
                       "emd": user_data["emd"], "gld": user_data["gld"]}
         client.send(["h.minfo", {"plr": plr, "tm": 1}])

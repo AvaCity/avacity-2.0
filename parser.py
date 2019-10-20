@@ -97,3 +97,21 @@ class Parser():
                 else:
                     items[name][attr] = 0
         return items
+
+    def parse_achievements(self):
+        doc = etree.parse("config_all_ru/modules/achievements.xml",
+                          parser=self.parser)
+        root = doc.getroot()
+        ac = []
+        for item in root.findall(".//achievement"):
+            ac.append(item.attrib["id"])
+        return ac
+
+    def parse_trophies(self):
+        doc = etree.parse("config_all_ru/modules/trophies.xml",
+                          parser=self.parser)
+        root = doc.getroot()
+        tr = []
+        for item in root.findall(".//trophy"):
+            tr.append(item.attrib["id"])
+        return tr

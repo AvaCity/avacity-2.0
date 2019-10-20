@@ -20,9 +20,12 @@ class Passport(Module):
         client.send(["psp.sttrph", {"trid": trid}])
 
     def passport(self, msg, client):
-        tr_ = {}
-        for item in tr:
-            tr_[item] = {"trrt": 0, "trcd": 0, "trid": item}
+        ac = {}
+        for item in self.server.achievements:
+            ac[item] = {"p": 0, "nWct": 0, "l": 3, "aId": item}
+        tr = {}
+        for item in self.server.trophies:
+            tr[item] = {"trrt": 0, "trcd": 0, "trid": item}
         client.send(["psp.psp", {"psp": {"uid": msg[2]["uid"],
-                                         "ach": {"ac": {}, "tr": tr_},
+                                         "ach": {"ac": ac, "tr": tr},
                                          "rel": {}}}])
