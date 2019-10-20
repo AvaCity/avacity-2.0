@@ -12,7 +12,8 @@ class Support(Module):
     def __init__(self, server):
         self.server = server
         self.commands = {"init": self.init, "gscnl": self.get_social_channels,
-                         "rsnm": self.reset_avatar_name}
+                         "rsnm": self.reset_avatar_name,
+                         "lmdac": self.load_moderator_actions}
 
     def init(self, msg, client):
         client.send(["spt.init", {"a": False}])
@@ -40,3 +41,6 @@ class Support(Module):
             if tmp.uid == uid:
                 refresh_avatar(tmp, self.server)
                 break
+
+    def load_moderator_actions(self, msg, client):
+        client.send(["spt.lmdac", {"uid": msg[2]["uid"], "acts": []}])
