@@ -18,58 +18,14 @@ class Furniture(Module):
         if room[1] != client.uid:
             return
         for item in msg[2]["f"]:
-            items = self.server.redis.smembers(f"rooms:{uid}:{room[2]}:items")
             if item["t"] == 0:
-                if not self.server.inv[uid].take_item(item["tpid"]):
-                    continue
-                if any(ext in item["tpid"].lower()
-                       for ext in ["wll", "wall"]):
-                    walls = []
-                    for wall in ["wall", "wll"]:
-                        for room_item in items:
-                            if wall in room_item.lower():
-                                self.del_item(room_item, room[2], uid)
-                                tmp = room_item.split("_")[0]
-                                if tmp not in walls:
-                                    walls.append(tmp)
-                                    self.server.inv[uid].add_item(tmp, "frn")
-                    item["x"] = 0.0
-                    item["y"] = 0.0
-                    item["z"] = 0.0
-                    item["d"] = 3
-                    self.add_item(item, room[2], uid)
-                    item["x"] = 13.0
-                    item["d"] = 5
-                    item["oid"] += 1
-                    self.add_item(item, room[2], uid)
-                elif any(ext in item["tpid"].lower()
-                         for ext in ["flr", "floor"]):
-                    for floor in ["flr", "floor"]:
-                        for room_item in items:
-                            if floor in room_item.lower():
-                                self.del_item(room_item, room[2], uid)
-                                tmp = room_item.split("_")[0]
-                                self.server.inv[uid].add_item(tmp, "frn")
-                    item["x"] = 0.0
-                    item["y"] = 0.0
-                    item["z"] = 0.0
-                    item["d"] = 5
-                    self.add_item(item, room[2], uid)
+                self.type_add(item, room, uid)
             if item["t"] == 1:
-                name = f"{item['tpid']}_{item['oid']}"
-                if name in items:
-                    self.del_item(name, room[2], uid)
-                    self.add_item(item, room[2], uid)
-                else:
-                    if not self.server.inv[uid].take_item(item["tpid"]):
-                        continue
-                    self.add_item(item, room[2], uid)
+                self.type_update(item, room, uid)
             elif item["t"] == 2:
-                name = f"{item['tpid']}_{item['oid']}"
-                if name not in items:
-                    continue
-                self.del_item(name, room[2], uid)
-                self.server.inv[uid].add_item(item["tpid"], "frn")
+                self.type_remove(item, room, uid)
+            elif item["t"] == 3:
+                self.type_replace_door(item, room, uid)
         inv = self.server.inv[uid].get()
         room_inf = self.server.redis.lrange(f"rooms:{uid}:{room[2]}", 0, -1)
         room_items = self.server.get_room_items(uid, room[2])
@@ -80,6 +36,86 @@ class Furniture(Module):
                                          "id": room[2], "l": 13,
                                          "lev": int(room_inf[1]),
                                          "nm": room[0]}}])
+
+    def type_add(self, item, room, uid):
+        items = self.server.redis.smembers(f"rooms:{uid}:{room[2]}:items")
+        if not self.server.inv[uid].take_item(item["tpid"]):
+            return
+        if any(ext in item["tpid"].lower() for ext in ["wll", "wall"]):
+            walls = []
+            for wall in ["wall", "wll"]:
+                for room_item in items:
+                    if wall in room_item.lower():
+                        self.del_item(room_item, room[2], uid)
+                        tmp = room_item.split("_")[0]
+                        if tmp not in walls:
+                            walls.append(tmp)
+                            self.server.inv[uid].add_item(tmp, "frn")
+            item["x"] = 0.0
+            item["y"] = 0.0
+            item["z"] = 0.0
+            item["d"] = 3
+            self.add_item(item, room[2], uid)
+            item["x"] = 13.0
+            item["d"] = 5
+            item["oid"] += 1
+            self.add_item(item, room[2], uid)
+        elif any(ext in item["tpid"].lower() for ext in ["flr", "floor"]):
+            for floor in ["flr", "floor"]:
+                for room_item in items:
+                    if floor in room_item.lower():
+                        self.del_item(room_item, room[2], uid)
+                        tmp = room_item.split("_")[0]
+                        self.server.inv[uid].add_item(tmp, "frn")
+            item["x"] = 0.0
+            item["y"] = 0.0
+            item["z"] = 0.0
+            item["d"] = 5
+            self.add_item(item, room[2], uid)
+
+    def type_update(self, item, room, uid):
+        redis = self.server.redis
+        items = redis.smembers(f"rooms:{uid}:{room[2]}:items")
+        name = f"{item['tpid']}_{item['oid']}"
+        if name in items:
+            rid = redis.lindex(f"rooms:{uid}:{room[2]}:items:{name}", 4)
+            if rid:
+                item["rid"] = rid
+            self.del_item(name, room[2], uid)
+            self.add_item(item, room[2], uid)
+        else:
+            if not self.server.inv[uid].take_item(item["tpid"]):
+                return
+            self.add_item(item, room[2], uid)
+
+    def type_remove(self, item, room, uid):
+        items = self.server.redis.smembers(f"rooms:{uid}:{room[2]}:items")
+        name = f"{item['tpid']}_{item['oid']}"
+        if name not in items:
+            return
+        self.del_item(name, room[2], uid)
+        self.server.inv[uid].add_item(item["tpid"], "frn")
+
+    def type_replace_door(self, item, room, uid):
+        items = self.server.redis.smembers(f"rooms:{uid}:{room[2]}:items")
+        found = None
+        for tmp in items:
+            oid = int(tmp.split("_")[1])
+            if oid == item["oid"]:
+                found = tmp
+                break
+        if not found:
+            return
+        if not self.server.inv[uid].take_item(item["tpid"]):
+            return
+        data = self.server.redis.lrange(f"rooms:{uid}:{room[2]}:items:{found}",
+                                        0, -1)
+        self.del_item(found, room[2], uid)
+        self.server.inv[uid].add_item(found.split("_")[0], "frn")
+        item.update({"x": float(data[0]), "y": float(data[1]),
+                     "z": float(data[2]), "d": int(data[3]),
+                     "rid": data[4]})
+        self.add_item(item, room[2], uid)
 
     def buy(self, msg, client):
         item = msg[2]["tpid"]
