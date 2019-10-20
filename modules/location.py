@@ -64,6 +64,10 @@ def gen_plr(client, server):
                  "lrnt": 0, "lwts": 0, "skid": None, "skrt": 0, "bcld": 0,
                  "trid": user_data["trid"], "trcd": 0, "sbid": None,
                  "sbrt": 0, "plcmt": {}, "pamns": {"amn": []}, "crst": 0}
+    plr["pf"] = {"pf": {"jntr": {"tp": "jntr", "l": 20, "pgs": 0},
+                        "phtghr": {"tp": "phtghr", "l": 20, "pgs": 0},
+                        "grdnr": {"tp": "grdnr", "l": 20, "pgs": 0},
+                        "vsgst": {"tp": "vsgst", "l": 20, "pgs": 0}}}
     return plr
 
 
