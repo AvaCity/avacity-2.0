@@ -81,28 +81,13 @@ async def process_config(version):
     doc = etree.parse(f"{directory}/avatarAppearance/appearance.xml",
                       parser=parser)
     root = doc.getroot()
-    for el in root.xpath("//item[@salonOnly='1']"):
-        del el.attrib["salonOnly"]
     for el in root.xpath("//item[@canBuy='0']"):
         del el.attrib["canBuy"]
     for el in root.xpath("//item[@clanOnly='1']"):
         del el.attrib["clanOnly"]
-    for el in root.xpath("//item[@visagistLevel]"):
-        del el.attrib["visagistLevel"]
     string = etree.tostring(root, pretty_print=True,
                             xml_declaration=True).decode()
     with open(f"{directory}/avatarAppearance/appearance.xml", "w") as f:
-        f.write(string)
-    doc = etree.parse(f"{directory}/avatarAppearance/colors.xml",
-                      parser=parser)
-    root = doc.getroot()
-    for el in root.xpath("//*[@salonOnly='1']"):
-        del el.attrib["salonOnly"]
-    for el in root.xpath("//*[@visagistLevel]"):
-        del el.attrib["visagistLevel"]
-    string = etree.tostring(root, pretty_print=True,
-                            xml_declaration=True).decode()
-    with open(f"{directory}/avatarAppearance/colors.xml", "w") as f:
         f.write(string)
     doc = etree.parse(f"{directory}/inventory/stickerPack.xml",
                       parser=parser)
