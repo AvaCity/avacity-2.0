@@ -10,7 +10,7 @@ class Passport(Module):
         self.commands = {"sttrph": self.set_trophy, "psp": self.passport}
 
     def set_trophy(self, msg, client):
-        if msg[2]["trid"] not in tr:
+        if msg[2]["trid"] not in self.server.trophies:
             self.server.redis.delete(f"uid:{client.uid}:trid")
             trid = None
         else:
