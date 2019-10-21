@@ -1,7 +1,7 @@
 # Ava.City 2.0
 Тестовый сервер: https://ava.city
 
-Регистрация через telegram: t.me/avacity_test_bot (@avacity_test_bot)
+Регистрация через telegram: https://t.me/avacity_test_bot (@avacity_test_bot)
 
 
 Пожалуйста, прежде чем создавать Issue с ошибкой убедитесь в том, что она воспроизводится на нашем тестовом сервере.
