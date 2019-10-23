@@ -65,8 +65,9 @@ class Inventory():
 
     def change_wearing(self, cloth, wearing):
         if not self.server.redis.lindex(f"uid:{self.uid}:items:{cloth}", 0):
-            logging.error(f"Cloth {cloth} not found for {self.uid}")
-            return
+            not_found = True
+        else:
+            not_found = False
         if "_" in cloth:
             tid, iid = cloth.split("_")
         else:
@@ -74,6 +75,9 @@ class Inventory():
             iid = ""
         type_items = self.inv["c"]["cls"]["it"]
         if wearing:
+            if not_found:
+                logging.error(f"Cloth {cloth} not found for {self.uid}")
+                return
             if "_" in cloth:
                 name = cloth.split("_")[0]
             else:
@@ -89,7 +93,8 @@ class Inventory():
             if cloth not in weared:
                 logging.error(f"Cloth {cloth} not weared for {self.uid}")
                 return
-            type_items.append({"c": 1, "iid": iid, "tid": tid})
+            if not not_found:
+                type_items.append({"c": 1, "iid": iid, "tid": tid})
             self.server.redis.srem(f"uid:{self.uid}:wearing", cloth)
 
     def __get_expire(self):
