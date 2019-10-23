@@ -35,8 +35,8 @@
             }
             var vars = {};
             vars['config'] = '/appconfig.xml';
-            vars['versions'] = '/files/versions.json';
-            vars['appSwf'] = '/files/pnz-city.swf';
+            vars['versions'] = '/files/versions.json?{{ update_time }}';
+            vars['appSwf'] = '/files/pnz-city.swf?{{ update_time }}';
             var flashVars = [];
             for (var variable in vars) {
                 flashVars.push(variable + '=' + vars[variable]);

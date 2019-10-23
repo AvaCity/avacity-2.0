@@ -42,6 +42,7 @@ async def index(request):
     else:
         context["logged_in"] = True
         context["token"] = session["token"]
+        context["update_time"] = config["webserver"]["update_time"]
     return aiohttp_jinja2.render_template("index.html", request,
                                           context=context)
 

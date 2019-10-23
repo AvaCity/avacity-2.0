@@ -1,9 +1,11 @@
 import os
 import json
+import time
 import shutil
 import asyncio
 import zipfile
 import hashlib
+import configparser
 import aiohttp
 from lxml import etree
 
@@ -57,6 +59,11 @@ async def main():
             with open(f"files/{filename}", "wb") as f:
                 f.write(content)
             print(f"Got {filename}")
+    webconfig = configparser.ConfigParser()
+    webconfig.read("web.ini")
+    webconfig["webserver"]["update_time"] = str(int(time.time()))
+    with open("web.ini", "w") as f:
+        webconfig.write(f)
 
 
 async def process_config(version):
