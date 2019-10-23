@@ -74,6 +74,12 @@ async def process_config(version):
         root = doc.getroot()
         for el in root.xpath("//item[@canBuy='0']"):
             del el.attrib["canBuy"]
+        for el in root.xpath("//item[@wedding='1']"):
+            del el.attrib["wedding"]
+        for el in root.xpath("//item[@holiday]"):
+            del el.attrib["holiday"]
+        for el in root.xpath("//item[@clanOnly='1']"):
+            del el.attrib["clanOnly"]
         string = etree.tostring(root, pretty_print=True,
                                 xml_declaration=True).decode()
         with open(f"{directory}/inventory/{filename}.xml", "w") as f:
