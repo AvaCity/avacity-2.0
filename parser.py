@@ -94,10 +94,12 @@ class Parser():
             for item in category.findall(".//item"):
                 name = item.attrib["id"]
                 items[cat_name][name] = {}
-                for attr in ["gold", "silver"]:
+                for attr in ["gold", "silver", "saleSilver"]:
                     if attr in item.attrib:
                         items[cat_name][name][attr] = int(item.attrib[attr])
                     else:
+                        if attr == "saleSilver":
+                            continue
                         items[cat_name][name][attr] = 0
         return items
 

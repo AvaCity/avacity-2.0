@@ -14,7 +14,7 @@ modules = ["client_error", "house", "outside", "user_rating", "mail", "avatar",
            "location_game", "relations", "social_request", "user_rating",
            "competition", "furniture", "billing", "component", "support",
            "passport", "player", "statistics", "shop", "mobile", "confirm",
-           "craft", "profession"]
+           "craft", "profession", "inventory"]
 
 
 def get_git_revision_short_hash():
@@ -34,6 +34,7 @@ class Server():
         self.conflicts = self.parser.parse_conflicts()
         self.achievements = self.parser.parse_achievements()
         self.trophies = self.parser.parse_trophies()
+        self.game_items = self.parser.parse_game_items()
         self.modules = {}
         for item in modules:
             module = importlib.import_module(f"modules.{item}")
