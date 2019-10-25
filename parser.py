@@ -4,6 +4,8 @@ from lxml import etree
 class Parser():
     def __init__(self):
         self.parser = etree.XMLParser(remove_comments=True)
+        self.apprnc_map = ["sc", "et", "brt", "at", "ht", "bt", "sh", "rg",
+                           "ss", "pt", "fat", "fft"]
 
     def parse_clothes(self):
         clothes = {"boy": {}, "girl": {}}
@@ -137,3 +139,26 @@ class Parser():
                 count = int(tmp.attrib["count"])
                 items[id_]["items"][itemId] = count
         return items
+
+    def parse_appearance(self):
+        doc = etree.parse("config_all_ru/avatarAppearance/appearance.xml",
+                          parser=self.parser)
+        root = doc.getroot()
+        apprnc = {"boy": {}, "girl": {}}
+        for gender in ["boy", "girl"]:
+            el = root.find(gender)
+            for category in el.findall("category"):
+                id_ = int(category.attrib["id"])
+                map_ = self.apprnc_map[id_]
+                apprnc[gender][map_] = {}
+                for item in category.findall("item"):
+                    kind = int(item.attrib["kind"])
+                    apprnc[gender][map_][kind] = {}
+                    for attr in ["silver", "gold", "brush", "visagistLevel"]:
+                        if attr in item.attrib:
+                            value = int(item.attrib[attr])
+                            apprnc[gender][map_][kind][attr] = value
+                    for attr in ["salonOnly"]:
+                        if attr in item.attrib:
+                            apprnc[gender][map_][kind][attr] = True
+        return apprnc

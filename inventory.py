@@ -63,6 +63,13 @@ class Inventory():
                     break
         return True
 
+    def get_item(self, item):
+        items = self.server.redis.smembers(f"uid:{self.uid}:items")
+        if item not in items:
+            return 0
+        have = int(self.server.redis.lindex(f"uid:{self.uid}:items:{item}", 1))
+        return have
+
     def change_wearing(self, cloth, wearing):
         if not self.server.redis.lindex(f"uid:{self.uid}:items:{cloth}", 0):
             not_found = True

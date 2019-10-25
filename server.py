@@ -35,6 +35,7 @@ class Server():
         self.achievements = self.parser.parse_achievements()
         self.trophies = self.parser.parse_trophies()
         self.game_items = self.parser.parse_game_items()
+        self.appearance = self.parser.parse_appearance()
         self.modules = {}
         for item in modules:
             module = importlib.import_module(f"modules.{item}")
