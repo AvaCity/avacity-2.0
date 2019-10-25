@@ -23,6 +23,7 @@ clans = False
 mobile = True
 fortune2 = True
 professions = True
+reputation = False
 
 if clans:
     campaigns.append({"st": 1, "v": 1,
@@ -45,16 +46,22 @@ if fortune2:
                       "id": 299, "iu": "", "tp": 9,
                       "ed": datetime(2030, 10, 31, 2, 0)})
 if professions:
-    campaigns.append({'st': 1, 'v': 1,
-                      'cil': [{'sc': 0, 'gl': 0, 'si': 0, 'id': 1110,
-                               'tid': 'professions', 'cid': 114},
-                              {'sc': 0, 'gl': 0, 'si': 0, 'id': 1111,
-                               'tid': 'grdnr', 'cid': 114},
-                              {'sc': 0, 'gl': 0, 'si': 0, 'id': 1112,
-                               'tid': 'jntr', 'cid': 114},
-                              {'sc': 0, 'gl': 0, 'si': 0, 'id': 1577,
-                               'tid': 'vsgst', 'cid': 114},
-                              {'sc': 0, 'gl': 0, 'si': 0, 'id': 1578,
-                               'tid': 'phtghr', 'cid': 114}],
-                      'id': 114, 'iu': '', 'tp': 9,
-                      'ed': datetime(2015, 8, 27, 2, 0)})
+    campaigns.append({"st": 1, "v": 1,
+                      "cil": [{"sc": 0, "gl": 0, "si": 0, "id": 1110,
+                               "tid": "professions", "cid": 114},
+                              {"sc": 0, "gl": 0, "si": 0, "id": 1111,
+                               "tid": "grdnr", "cid": 114},
+                              {"sc": 0, "gl": 0, "si": 0, "id": 1112,
+                               "tid": "jntr", "cid": 114},
+                              {"sc": 0, "gl": 0, "si": 0, "id": 1577,
+                               "tid": "vsgst", "cid": 114},
+                              {"sc": 0, "gl": 0, "si": 0, "id": 1578,
+                               "tid": "phtghr", "cid": 114}],
+                      "id": 114, "iu": "", "tp": 9,
+                      "ed": datetime(2015, 8, 27, 2, 0)})
+if reputation:
+    campaigns.append({"st": 1, "v": 1,
+                      "cil": [{"sc": 0, "gl": 0, "si": 0, "id": 1109,
+                               "tid": "reputation", "cid": 113}],
+                      "id": 113, "iu": "", "tp": 9,
+                      "ed": datetime(2015, 8, 18, 2, 0)})
