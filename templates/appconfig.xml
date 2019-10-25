@@ -4,10 +4,10 @@
 
     <profile>local</profile>
 
-    <collectStats>true</collectStats>
-    <bigBrother url="/bigbrother" project="local" active="true"/>
+    <collectStats>false</collectStats>
+    <bigBrother url="/big_brother" project="local" active="false"/>
     <loadingStatisticUrl>/loadingStats</loadingStatisticUrl>
-    <statsActive>true</statsActive>
+    <statsActive>false</statsActive>
     <loginCallback>/prelogin</loginCallback>
     <applicationId>avataria-local</applicationId>
     <production>true</production>
@@ -29,18 +29,22 @@
 
     <globalNews active="true"/>
 
+    <clan>
+        <logoUrl>{{ address }}/files/promo/clan/logo/{$id}.png</logoUrl>
+    </clan>
+
     <contentConfigs>
         <contentConfig cdn="default">
-            <contentUrl>{{address}}/files/</contentUrl>
+            <contentUrl>{{ address }}/files/</contentUrl>
             <contentMirrorUrl></contentMirrorUrl>
-            <furnitureUrl>{{address}}/files/swf/furniture/</furnitureUrl>
+            <furnitureUrl>{{ address }}/files/swf/furniture/</furnitureUrl>
             <furnitureMirrorUrl></furnitureMirrorUrl>
         </contentConfig>
     </contentConfigs>
 
-    <clientLogUrl>/clientLog</clientLogUrl>
+    <clientLogUrl>/client_log</clientLogUrl>
 
-    <supportUrl></supportUrl>
+    <supportUrl>https://github.com/AvaCity/avacity-2.0/issues</supportUrl>
 
     <island show="true" exchange="true"/>
     <rating on="true" allowedIds=""/>
@@ -50,17 +54,17 @@
     <allowedIds></allowedIds>
 
     <preloaderThemes>
-        <theme id="pillows" url="/files/swf/preloader/PillowFightComix_ru.swf"/>
-        <theme id="romance" url="/files/swf/preloader/RomanceComix_ru.swf"/>
-        <theme id="dresses" url="/files/swf/preloader/GirlsDressesComix_ru.swf"/>
+        <theme id="pillows" url="{{ address }}/files/swf/preloader/PillowFightComix_ru.swf"/>
+        <theme id="romance" url="{{ address }}/files/swf/preloader/RomanceComix_ru.swf"/>
+        <theme id="dresses" url="{{ address }}/files/swf/preloader/GirlsDressesComix_ru.swf"/>
     </preloaderThemes>
 
-    <appNotAvailableUrls bgUrl="/files/promo/error/ErrorMessageBg.png">
-        <message>/files/promo/error/ErrorMessage1_ru.png</message>
-        <message>/files/promo/error/ErrorMessage2_ru.png</message>
-        <message>/files/promo/error/ErrorMessage3_ru.png</message>
+    <appNotAvailableUrls bgUrl="{{ address }}/files/promo/error/ErrorMessageBg.png">
+        <message>{{ address }}/files/promo/error/ErrorMessage1_ru.png</message>
+        <message>{{ address }}/files/promo/error/ErrorMessage2_ru.png</message>
+        <message>{{ address }}/files/promo/error/ErrorMessage3_ru.png</message>
     </appNotAvailableUrls>
-    
+
     <social>
         <application name="city">
             <apiUrl>/social</apiUrl>
@@ -92,18 +96,18 @@
         <avatarAppearance>swf/AvatarAppearance.swf</avatarAppearance>
         <boyAvatarClothes>swf/BoyAvatarClothes.swf</boyAvatarClothes>
         <girlAvatarClothes>swf/GirlAvatarClothes.swf</girlAvatarClothes>
-        
+
         <ui>swf/Ui.swf</ui>
         <uiInit>swf/UiInit.swf</uiInit>
         <uiLang>swf/UiLang_:lang:.swf</uiLang>
         <location>swf/Location.swf</location>
-        
+
         <house>swf/House.swf</house>
         <kitchen>swf/Kitchen.swf</kitchen>
         <bathroom>swf/Bathroom.swf</bathroom>
         <furniture>swf/Furniture.swf</furniture>
         <decor>swf/Decor.swf</decor>
-        
+
         <yard>swf/Yard.swf</yard>
         <vip>swf/Vip.swf</vip>
         <cafe>swf/Cafe.swf</cafe>
@@ -131,20 +135,7 @@
         <mobile>swf/Mobile.swf</mobile>
         <clan>swf/Clan.swf</clan>
         <clanHall>swf/ClanHall.swf</clanHall>
-        <clubHlwn>swf/events/ClubHlwn.swf</clubHlwn>
-        <locationHlwn>swf/events/LocationHlwn.swf</locationHlwn>
-        <skiResort>swf/SkiResort.swf</skiResort>
-        <cafeNY>swf/events/CafeNY.swf</cafeNY>
-        <streetNY>swf/events/StreetNY.swf</streetNY>
-        <clubNY>swf/events/ClubNY.swf</clubNY>
-        <landscapeNY>swf/events/LandscapeNY.swf</landscapeNY>
-        <parkNY>swf/events/ParkNY.swf</parkNY>
-        <salonNY>swf/events/SalonNY.swf</salonNY>
-        <vipNY>swf/events/VipNY.swf</vipNY>
-        <memories>swf/Memories.swf</memories>
-        <parkHlwn>swf/events/ParkHlwn.swf</parkHlwn>
-        <podium>swf/Podium.swf</podium>
-        
+
         <newyear2014>swf/modules/NewYear2014.swf</newyear2014>
         <stval2014>swf/modules/StValentine2014.swf</stval2014>
         <dzo2014>swf/modules/Dzo2014.swf</dzo2014>
@@ -168,13 +159,26 @@
         <firstApril2017>swf/modules/FirstApril2017.swf</firstApril2017>
         <avaBirthday2017>swf/modules/AvaBirthday2017.swf</avaBirthday2017>
         <halloween2017>swf/modules/Halloween2017.swf</halloween2017>
+        <clubHlwn>swf/events/ClubHlwn.swf</clubHlwn>
+        <locationHlwn>swf/events/LocationHlwn.swf</locationHlwn>
         <newyear2018>swf/modules/NewYear2018.swf</newyear2018>
+        <skiResort>swf/SkiResort.swf</skiResort>
+        <cafeNY>swf/events/CafeNY.swf</cafeNY>
+        <streetNY>swf/events/StreetNY.swf</streetNY>
+        <clubNY>swf/events/ClubNY.swf</clubNY>
+        <landscapeNY>swf/events/LandscapeNY.swf</landscapeNY>
+        <parkNY>swf/events/ParkNY.swf</parkNY>
+        <salonNY>swf/events/SalonNY.swf</salonNY>
+        <vipNY>swf/events/VipNY.swf</vipNY>
         <stVal2018>swf/modules/StValentine2018.swf</stVal2018>
         <dzo2018>swf/modules/Dzo2018.swf</dzo2018>
         <springDay2018>swf/modules/SpringDay2018.swf</springDay2018>
         <firstApril2018>swf/modules/FirstApril2018.swf</firstApril2018>
         <avaBirthday2018>swf/modules/AvaBirthday2018.swf</avaBirthday2018>
         <halloween2018>swf/modules/Halloween2018.swf</halloween2018>
+        <memories>swf/Memories.swf</memories>
+        <parkHlwn>swf/events/ParkHlwn.swf</parkHlwn>
+        <podium>swf/Podium.swf</podium>
         <newyear2019>swf/modules/NewYear2019.swf</newyear2019>
         <vkPay2018>swf/modules/VKPay2018.swf</vkPay2018>
         <stval2019>swf/modules/StValentine2019.swf</stval2019>
@@ -182,26 +186,11 @@
         <springDay2019>swf/modules/SpringDay2019.swf</springDay2019>
         <firstApril2019>swf/modules/FirstApril2019.swf</firstApril2019>
         <streetAvaBD>swf/events/StreetAvaBD.swf</streetAvaBD>
+        <seasonEvent>swf/modules/SeasonEvent.swf</seasonEvent>
 
-        <cafe1>music/Cafe1.mp3</cafe1>
-        <cafe2>music/Cafe2.mp3</cafe2>
-        <home1>music/Home1.mp3</home1>
-        <home2>music/Home2.mp3</home2>
-        <job1>music/Job1.mp3</job1>
-        <job2>music/Job2.mp3</job2>
-        <outside1>music/Outside1.mp3</outside1>
-        <outside2>music/Outside2.mp3</outside2>
-        <vip1>music/VIP1.mp3</vip1>
-        <vip2>music/VIP2.mp3</vip2>
-        <club1>music/Club1.mp3</club1>
-        <club2>music/Club2.mp3</club2>
-        <skiResort>music/SkiResort.mp3</skiResort>
-        <testTrack1>music/TopForTest.mp3</testTrack1>
-        <testTrack2>music/CrossLilu.mp3</testTrack2>
-        
         <config>data/config_all_ru.zip</config>
     </resourseMap>
-
+    
     <resourseMapMirror>
         <avatarIcons>swf/AvatarIcons.swf</avatarIcons>
         <appearanceIcons>swf/AppearanceIcons.swf</appearanceIcons>
@@ -209,18 +198,18 @@
         <avatarAppearance>swf/AvatarAppearance.swf</avatarAppearance>
         <boyAvatarClothes>swf/BoyAvatarClothes.swf</boyAvatarClothes>
         <girlAvatarClothes>swf/GirlAvatarClothes.swf</girlAvatarClothes>
-        
+
         <ui>swf/Ui.swf</ui>
         <uiInit>swf/UiInit.swf</uiInit>
         <uiLang>swf/UiLang_:lang:.swf</uiLang>
         <location>swf/Location.swf</location>
-        
+
         <house>swf/House.swf</house>
         <kitchen>swf/Kitchen.swf</kitchen>
         <bathroom>swf/Bathroom.swf</bathroom>
         <furniture>swf/Furniture.swf</furniture>
         <decor>swf/Decor.swf</decor>
-        
+
         <yard>swf/Yard.swf</yard>
         <vip>swf/Vip.swf</vip>
         <cafe>swf/Cafe.swf</cafe>
@@ -239,8 +228,6 @@
         <photoSalonPro>swf/PhotoSalonPro.swf</photoSalonPro>
         <publicBeach>swf/PublicBeach.swf</publicBeach>
         <canyon>swf/Canyon.swf</canyon>
-        <ballroom>swf/Ballroom.swf</ballroom>
-        <couturier>swf/Couturier.swf</couturier>
         <offers>swf/Offers.swf</offers>
         <weddingBeach>swf/WeddingBeach.swf</weddingBeach>
         <iceRink>swf/IceRink.swf</iceRink>
@@ -248,20 +235,7 @@
         <mobile>swf/Mobile.swf</mobile>
         <clan>swf/Clan.swf</clan>
         <clanHall>swf/ClanHall.swf</clanHall>
-        <clubHlwn>swf/events/ClubHlwn.swf</clubHlwn>
-        <locationHlwn>swf/events/LocationHlwn.swf</locationHlwn>
-        <skiResort>swf/SkiResort.swf</skiResort>
-        <cafeNY>swf/events/CafeNY.swf</cafeNY>
-        <streetNY>swf/events/StreetNY.swf</streetNY>
-        <clubNY>swf/events/ClubNY.swf</clubNY>
-        <landscapeNY>swf/events/LandscapeNY.swf</landscapeNY>
-        <parkNY>swf/events/ParkNY.swf</parkNY>
-        <salonNY>swf/events/SalonNY.swf</salonNY>
-        <vipNY>swf/events/VipNY.swf</vipNY>
-        <memories>swf/Memories.swf</memories>
-        <parkHlwn>swf/events/ParkHlwn.swf</parkHlwn>
-        <podium>swf/Podium.swf</podium>
-        
+
         <newyear2014>swf/modules/NewYear2014.swf</newyear2014>
         <stval2014>swf/modules/StValentine2014.swf</stval2014>
         <dzo2014>swf/modules/Dzo2014.swf</dzo2014>
@@ -269,7 +243,6 @@
         <steampunk2014>swf/modules/Steampunk2014.swf</steampunk2014>
         <newyear2015>swf/modules/NewYear2015.swf</newyear2015>
         <stval2015>swf/modules/StValentine2015.swf</stval2015>
-        <springDay2015>swf/modules/SpringDay2015.swf</springDay2015>
         <may1st2015>swf/modules/May1st2015.swf</may1st2015>
         <dirol2015>swf/modules/Dirol2015.swf</dirol2015>
         <kotex2015>swf/modules/Kotex2015.swf</kotex2015>
@@ -285,13 +258,26 @@
         <firstApril2017>swf/modules/FirstApril2017.swf</firstApril2017>
         <avaBirthday2017>swf/modules/AvaBirthday2017.swf</avaBirthday2017>
         <halloween2017>swf/modules/Halloween2017.swf</halloween2017>
+        <clubHlwn>swf/events/ClubHlwn.swf</clubHlwn>
+        <locationHlwn>swf/events/LocationHlwn.swf</locationHlwn>
         <newyear2018>swf/modules/NewYear2018.swf</newyear2018>
+        <skiResort>swf/SkiResort.swf</skiResort>
+        <cafeNY>swf/events/CafeNY.swf</cafeNY>
+        <streetNY>swf/events/StreetNY.swf</streetNY>
+        <clubNY>swf/events/ClubNY.swf</clubNY>
+        <landscapeNY>swf/events/LandscapeNY.swf</landscapeNY>
+        <parkNY>swf/events/ParkNY.swf</parkNY>
+        <salonNY>swf/events/SalonNY.swf</salonNY>
+        <vipNY>swf/events/VipNY.swf</vipNY>
         <stVal2018>swf/modules/StValentine2018.swf</stVal2018>
         <dzo2018>swf/modules/Dzo2018.swf</dzo2018>
         <springDay2018>swf/modules/SpringDay2018.swf</springDay2018>
         <firstApril2018>swf/modules/FirstApril2018.swf</firstApril2018>
         <avaBirthday2018>swf/modules/AvaBirthday2018.swf</avaBirthday2018>
         <halloween2018>swf/modules/Halloween2018.swf</halloween2018>
+        <memories>swf/Memories.swf</memories>
+        <parkHlwn>swf/events/ParkHlwn.swf</parkHlwn>
+        <podium>swf/Podium.swf</podium>
         <newyear2019>swf/modules/NewYear2019.swf</newyear2019>
         <vkPay2018>swf/modules/VKPay2018.swf</vkPay2018>
         <stval2019>swf/modules/StValentine2019.swf</stval2019>
@@ -299,22 +285,7 @@
         <springDay2019>swf/modules/SpringDay2019.swf</springDay2019>
         <firstApril2019>swf/modules/FirstApril2019.swf</firstApril2019>
         <streetAvaBD>swf/events/StreetAvaBD.swf</streetAvaBD>
-
-        <cafe1>music/Cafe1.mp3</cafe1>
-        <cafe2>music/Cafe2.mp3</cafe2>
-        <home1>music/Home1.mp3</home1>
-        <home2>music/Home2.mp3</home2>
-        <job1>music/Job1.mp3</job1>
-        <job2>music/Job2.mp3</job2>
-        <outside1>music/Outside1.mp3</outside1>
-        <outside2>music/Outside2.mp3</outside2>
-        <vip1>music/VIP1.mp3</vip1>
-        <vip2>music/VIP2.mp3</vip2>
-        <club1>music/Club1.mp3</club1>
-        <club2>music/Club2.mp3</club2>
-        <skiResort>music/SkiResort.mp3</skiResort>
-        <testTrack1>music/TopForTest.mp3</testTrack1>
-        <testTrack2>music/CrossLilu.mp3</testTrack2>
+        <seasonEvent>swf/modules/SeasonEvent.swf</seasonEvent>
 
         <config>data/config_all_ru.zip</config>
     </resourseMapMirror>
