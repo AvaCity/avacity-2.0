@@ -2,6 +2,7 @@ from modules.base_module import Module
 
 class_name = "Mail"
 
+
 class Mail(Module):
     prefix = "mail"
 

@@ -3,6 +3,7 @@ from modules.location import gen_plr
 
 class_name = "Player"
 
+
 class Player(Module):
     prefix = "pl"
 
@@ -31,8 +32,9 @@ class Player(Module):
             locinfo = None
         else:
             scs = "success"
-            locinfo = {"st": 0, "s": "127.0.0.1", "at": None, "d": 0, "x": -1.0,
-                       "y": -1.0, "shlc": True, "pl": "", "l": tmp.room}
+            locinfo = {"st": 0, "s": "127.0.0.1", "at": None, "d": 0,
+                       "x": -1.0, "y": -1.0, "shlc": True, "pl": "",
+                       "l": tmp.room}
         client.send(["pl.flw", {"scs": scs, "locinfo": locinfo}])
 
     def get_online_statuses(self, msg, client):

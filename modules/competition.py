@@ -2,6 +2,7 @@ from modules.base_module import Module
 
 class_name = "Competition"
 
+
 class Competition(Module):
     prefix = "ctmr"
 
