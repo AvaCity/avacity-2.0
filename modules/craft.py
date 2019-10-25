@@ -26,7 +26,7 @@ class Craft(Module):
                 have = 0
             else:
                 have = int(have)
-            amount = self.craft_items[buy_for][item] - have
+            amount = self.craft_items[buy_for]["items"][item] - have
             if amount <= 0:
                 continue
             gold += int(rd(price * amount))
@@ -48,28 +48,32 @@ class Craft(Module):
 
     def produce(self, msg, client):
         itId = msg[2]["itId"]
+        count = 1
         if itId not in self.craft_items:
             return
         redis = self.server.redis
-        for item in self.craft_items[itId]:
+        for item in self.craft_items[itId]["items"]:
             have = redis.lindex(f"uid:{client.uid}:items:{item}", 1)
             if not have:
                 return
             have = int(have)
-            if have < self.craft_items[itId][item]:
+            if have < self.craft_items[itId]["items"][item]:
                 return
-        for item in self.craft_items[itId]:
-            amount = self.craft_items[itId][item]
+        for item in self.craft_items[itId]["items"]:
+            amount = self.craft_items[itId]["items"][item]
             self.server.inv[client.uid].take_item(item, amount)
+        if "craftedId" in self.craft_items[itId]:
+            count = self.craft_items[itId]["count"]
+            itId = self.craft_items[itId]["craftedId"]
         if itId in self.server.game_items["game"]:
             type_ = "gm"
         elif itId in self.server.game_items["loot"]:
             type_ = "lt"
         elif itId in self.server.modules["frn"].frn_list:
             type_ = "frn"
-        self.server.inv[client.uid].add_item(itId, type_)
+        self.server.inv[client.uid].add_item(itId, type_, count)
         inv = self.server.inv[client.uid].get()
-        client.send(["crt.prd", {"inv": inv, "crIt": {"c": 1, "lid": "",
+        client.send(["crt.prd", {"inv": inv, "crIt": {"c": count, "lid": "",
                                                       "tid": itId}}])
 
 

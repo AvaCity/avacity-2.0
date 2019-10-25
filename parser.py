@@ -128,7 +128,12 @@ class Parser():
         items = {}
         for item in root.findall(".//craftedItem"):
             id_ = item.attrib["itemId"]
-            items[id_] = {}
+            items[id_] = {"items": {}}
+            if "craftedId" in item.attrib:
+                items[id_]["craftedId"] = item.attrib["craftedId"]
+                items[id_]["count"] = int(item.attrib["count"])
             for tmp in item.findall("component"):
-                items[id_][tmp.attrib["itemId"]] = int(tmp.attrib["count"])
+                itemId = tmp.attrib["itemId"]
+                count = int(tmp.attrib["count"])
+                items[id_]["items"][itemId] = count
         return items
