@@ -98,11 +98,6 @@ async def process_config(version):
         del el.attrib["canBuy"]
     for el in root.xpath("//item[@clanOnly='1']"):
         del el.attrib["clanOnly"]
-    child = etree.Element("item")
-    child.attrib["kind"] = "5"
-    child.attrib["gold"] = "99"
-    for el in root.xpath("//category[@id='11']"):
-        el.append(child)
     string = etree.tostring(root, pretty_print=True,
                             xml_declaration=True).decode()
     with open(f"{directory}/avatarAppearance/appearance.xml", "w") as f:
