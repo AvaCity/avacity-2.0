@@ -10,7 +10,7 @@ class Component(Module):
         self.server = server
         self.commands = {"cht": self.chat, "m": self.moderation,
                          "ms": self.message}
-        self.priveleges = self.server.parser.parse_priveleges()
+        self.privileges = self.server.parser.parse_privileges()
 
     def chat(self, msg, client):
         subcommand = msg[1].split(".")[2]
@@ -35,7 +35,7 @@ class Component(Module):
         subcommand = msg[1].split(".")[2]
         if subcommand == "ar":  # access request
             user_data = self.server.get_user_data(client.uid)
-            if user_data["role"] >= self.priveleges[msg[2]["pvlg"]]:
+            if user_data["role"] >= self.privileges[msg[2]["pvlg"]]:
                 success = True
             else:
                 success = False
@@ -46,7 +46,7 @@ class Component(Module):
         subcommand = msg[1].split(".")[2]
         if subcommand == "smm":  # send moderator message
             user_data = self.server.get_user_data(client.uid)
-            if user_data["role"] < self.priveleges["MESSAGE_TO_USER"]:
+            if user_data["role"] < self.privileges["MESSAGE_TO_USER"]:
                 return
             uid = msg[2]["rcpnts"]
             message = msg[2]["txt"]
@@ -68,7 +68,7 @@ class Component(Module):
 
     def send_system_message(self, msg, client):
         user_data = self.server.get_user_data(client.uid)
-        if user_data["role"] < self.priveleges["SEND_SYSTEM_MESSAGE"]:
+        if user_data["role"] < self.privileges["SEND_SYSTEM_MESSAGE"]:
             return self.no_permission(client)
         message = msg.split("!ssm ")[1]
         for tmp in self.server.online.copy():

@@ -28,9 +28,9 @@ class Support(Module):
         client.send(["spt.gscnl", {"scls": channels}])
 
     def reset_avatar_name(self, msg, client):
-        priveleges = self.server.modules["cp"].priveleges
+        privileges = self.server.modules["cp"].priveliges
         user_data = self.server.get_user_data(client.uid)
-        if user_data["role"] < priveleges["RENAME_AVATAR"]:
+        if user_data["role"] < privileges["RENAME_AVATAR"]:
             return
         uid = str(msg[2]["uid"])
         name = msg[2]["n"]

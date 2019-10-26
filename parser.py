@@ -77,13 +77,13 @@ class Parser():
                               rule.attrib["category2"]])
         return conflicts
 
-    def parse_priveleges(self):
+    def parse_privileges(self):
         doc = etree.parse("config_all_ru/modules/acl.xml", parser=self.parser)
         root = doc.getroot()
-        priveleges = {}
+        privileges = {}
         for item in root.findall(".//privilege"):
-            priveleges[item.attrib["name"]] = int(item.attrib["minAuthority"])
-        return priveleges
+            privileges[item.attrib["name"]] = int(item.attrib["minAuthority"])
+        return privileges
 
     def parse_game_items(self):
         doc = etree.parse("config_all_ru/inventory/game.xml",
