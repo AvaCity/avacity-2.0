@@ -116,6 +116,35 @@ async def process_config(version):
                             xml_declaration=True).decode()
     with open(f"{directory}/inventory/stickerPack.xml", "w") as f:
         f.write(string)
+    for filename in ["furniture", "kitchen", "bathroom", "decor",
+                     "roomLayout"]:
+        doc = etree.parse(f"{directory}/inventory/{filename}.xml",
+                          parser=parser)
+        root = doc.getroot()
+        for el in root.findall(".//item[@canBuy='0']"):
+            del el.attrib["canBuy"]
+        string = etree.tostring(root, pretty_print=True,
+                                xml_declaration=True).decode()
+        with open(f"{directory}/inventory/{filename}.xml", "w") as f:
+            f.write(string)
+        tasks = []
+        loop = asyncio.get_event_loop()
+        async with aiohttp.ClientSession() as session:
+            for el in root.findall(".//item"):
+                name = el.attrib["name"]
+                folder = filename
+                if folder == "roomLayout":
+                    if name == "RoomBase":
+                        continue
+                    folder = "house"
+                elif folder == "decor":
+                    parent = el.getparent()
+                    if parent.attrib["id"] == "achievementsDecor":
+                        continue
+                url = f"{download_url}swf/furniture/{folder}/{name}.swf"
+                tasks.append(loop.create_task(download_furniture(url,
+                                                                 session)))
+            await asyncio.wait(tasks)
     z = zipfile.ZipFile("files/data/config_all_ru.zip", mode="w")
     for root, dirs, files in os.walk(directory):
         for file in files:
@@ -130,29 +159,6 @@ async def process_config(version):
     versions["data/config_all_ru.zip"] = hash_
     with open("files/versions.json", "w") as f:
         f.write(json.dumps(versions))
-    for filename in ["furniture", "kitchen", "bathroom", "decor",
-                     "roomLayout"]:
-        doc = etree.parse(f"{directory}/inventory/{filename}.xml",
-                          parser=parser)
-        root = doc.getroot()
-        tasks = []
-        loop = asyncio.get_event_loop()
-        async with aiohttp.ClientSession() as session:
-            for tmp in root.findall(".//item"):
-                name = tmp.attrib["name"]
-                folder = filename
-                if folder == "roomLayout":
-                    if name == "RoomBase":
-                        continue
-                    folder = "house"
-                elif folder == "decor":
-                    parent = tmp.getparent()
-                    if parent.attrib["id"] == "achievementsDecor":
-                        continue
-                url = f"{download_url}swf/furniture/{folder}/{name}.swf"
-                tasks.append(loop.create_task(download_furniture(url,
-                                                                 session)))
-            await asyncio.wait(tasks)
 
 
 async def download_file(filename, version, session):
@@ -161,7 +167,6 @@ async def download_file(filename, version, session):
     else:
         final = filename.split(".")[0]+f"_{version}."+filename.split(".")[1]
     if os.path.exists("files/"+final):
-        print(f"Already found - {final}")
         if "music" not in filename:
             versions[filename] = version
         return
@@ -185,7 +190,6 @@ async def download_furniture(url, session):
     folder = url.split("/")[-2]
     final = f"swf/furniture/{folder}/{url.split('/')[-1]}"
     if os.path.exists("files/"+final):
-        print(f"Already found - {final}")
         return
     async with session.get(url) as resp:
         if resp.status != 200:
