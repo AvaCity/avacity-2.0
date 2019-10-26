@@ -51,7 +51,7 @@ class Relations(Module):
         elif f"{client.uid}:{relation['uid']}" in rlts:
             return
         else:
-            return self._update_relation(f"{client.uid}:{relation['uid']}",
+            return self._create_relation(f"{client.uid}:{relation['uid']}",
                                          relation)
         if client.uid in confirms:
             del confirms[client.uid]
