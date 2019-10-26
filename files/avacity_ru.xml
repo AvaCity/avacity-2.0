@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dictionary>
+    <locale name="ru">
+        <message key="showModeratorActions">Действия модератора</message>
+        <message key="moderatorRatingsLabel">Рейтинг модераторов</message>
+        <message key="checkSocialAPI">Проверка социального API</message>
+        <message key="clothesPostEditor">Редактор одежды для постов</message>
+        <message key="findUserButtonLabel">Найти пользователя</message>
+        <message key="reconnectButtonLabel">Перезайти как:</message>
+    </locale>
+</dictionary>

@@ -140,6 +140,8 @@ async def process_config(version):
                 tasks.append(loop.create_task(download_furniture(url,
                                                                  session)))
             await asyncio.wait(tasks)
+    shutil.copyfile("files/avacity_ru.xml",
+                    "config_all_ru/translation/avacity_ru.xml")
     z = zipfile.ZipFile("files/data/config_all_ru.zip", mode="w")
     for root, dirs, files in os.walk(directory):
         for file in files:
