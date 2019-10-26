@@ -12,11 +12,21 @@ class Component(Module):
         self.commands = {"cht": self.chat, "m": self.moderation,
                          "ms": self.message}
         self.privileges = self.server.parser.parse_privileges()
+        self.mute = {}
 
     def chat(self, msg, client):
         subcommand = msg[1].split(".")[2]
         if subcommand == "sm":  # send message
             msg.pop(0)
+            if client.uid in self.mute:
+                time_left = self.mute[client.uid]-time.time()
+                if time_left > 0:
+                    client.send(["cp.ms.rsm", {"txt": "У вас мут ещё на "
+                                                      f"{int(time_left)} "
+                                                      "секунд"}])
+                    return
+                else:
+                    del self.mute[client.uid]
             if msg[1]["msg"]["cid"]:
                 for uid in msg[1]["msg"]["cid"].split("_"):
                     for tmp in self.server.online.copy():
@@ -92,6 +102,8 @@ class Component(Module):
             command = command.split(" ")[0]
         if command == "ssm":
             return self.send_system_message(msg, client)
+        elif command == "mute":
+            return self.mute_player(msg, client)
 
     def send_system_message(self, msg, client):
         user_data = self.server.get_user_data(client.uid)
@@ -100,6 +112,30 @@ class Component(Module):
         message = msg.split("!ssm ")[1]
         for tmp in self.server.online.copy():
             tmp.send(["cp.ms.rsm", {"txt": message}])
+
+    def mute_player(self, msg, client):
+        user_data = self.server.get_user_data(client.uid)
+        if user_data["role"] < self.privileges["CHAT_BAN"]:
+            return self.no_permission(client)
+        uid = msg.split()[1]
+        minutes = int(msg.split()[2])
+        apprnc = self.server.get_appearance(uid)
+        if not apprnc:
+            client.send(["cp.ms.rsm", {"txt": "Игрок не найден"}])
+            return
+        self.mute[uid] = time.time()+minutes*60
+        for tmp in self.server.online.copy():
+            if tmp.uid != uid:
+                continue
+            tmp.send(["cp.m.bccu", {"bcu": {"notes": "", "reviewerId": "0",
+                                            "mid": "0", "id": None,
+                                            "reviewState": 1, "userId": uid,
+                                            "mbt": int(time.time()*1000),
+                                            "mbd": minutes,
+                                            "categoryId": 14}}])
+            break
+        client.send(["cp.ms.rsm", {"txt": f"Игроку {apprnc['n']} выдан мут "
+                                          f"на {minutes} минут"}])
 
     def no_permission(self, client):
         client.send(["cp.ms.rsm", {"txt": "У вас недостаточно прав, чтобы "
