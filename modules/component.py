@@ -1,3 +1,4 @@
+import time
 from modules.base_module import Module
 
 class_name = "Component"
@@ -41,6 +42,32 @@ class Component(Module):
                 success = False
             client.send(["cp.m.ar", {"pvlg": msg[2]["pvlg"],
                                      "sccss": success}])
+        elif subcommand == "bu":
+            return self.ban_user(msg, client)
+
+    def ban_user(self, msg, client):
+        user_data = self.server.get_user_data(client.uid)
+        if user_data["role"] < self.privileges["AVATAR_BAN"]:
+            return
+        uid = msg[2]["uid"]
+        uid_user_data = self.server.get_user_data(uid)
+        if uid_user_data["role"] > 2:
+            return
+        redis = self.server.redis
+        redis.set(f"uid:{uid}:banned", client.uid)
+        ban_time = int(time.time()*1000)
+        redis.set(f"uid:{uid}:ban_time", ban_time)
+        for tmp in self.server.online.copy():
+            if tmp.uid != uid:
+                continue
+            tmp.send([10, "User is banned",
+                      {"duration": 999999, "banTime": ban_time,
+                       "notes": "Опа бан", "reviewerId": client.uid,
+                       "reasonId": 0, "unbanType": "none", "leftTime": 0,
+                       "id": None, "reviewState": 1, "userId": uid,
+                       "moderatorId": client.uid}], type_=2)
+            tmp.connection.shutdown(2)
+            break
 
     def message(self, msg, client):
         subcommand = msg[1].split(".")[2]

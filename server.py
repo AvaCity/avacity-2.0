@@ -19,8 +19,8 @@ modules = ["client_error", "house", "outside", "user_rating", "mail", "avatar",
 
 def get_git_revision_short_hash():
     try:
-        return subprocess.check_output(['git', 'rev-parse',
-                                        '--short', 'HEAD']).strip().decode()
+        return subprocess.check_output(["git", "rev-parse",
+                                        "--short", "HEAD"]).strip().decode()
     except (FileNotFoundError, subprocess.CalledProcessError):
         return "Unknown"
 
@@ -62,11 +62,11 @@ class Server():
     def process_data(self, data, client):
         if not client.uid:
             if data["type"] != 1:
-                client.connection.close()
+                client.connection.shutdown(2)
             self.auth(data["msg"], client)
             return
         if data["type"] == 2:
-            client.connection.close()
+            client.connection.shutdown(2)
             return
         elif data["type"] == 34:
             prefix = data["msg"][1].split(".")[0]
@@ -78,11 +78,22 @@ class Server():
     def auth(self, msg, client):
         uid = self.redis.get(f"auth:{msg[2]}")
         if not uid:
-            client.connection.close()
+            client.connection.shutdown(2)
+            return
+        banned = self.redis.get(f"uid:{uid}:banned")
+        if banned:
+            ban_time = int(self.redis.get(f"uid:{uid}:ban_time"))
+            client.send([10, "User is banned",
+                         {"duration": 999999, "banTime": ban_time,
+                          "notes": "Опа бан", "reviewerId": banned,
+                          "reasonId": 0, "unbanType": "none", "leftTime": 0,
+                          "id": None, "reviewState": 1, "userId": uid,
+                          "moderatorId": banned}], type_=2)
+            client.connection.shutdown(2)
             return
         for tmp in self.online:
             if tmp.uid == uid:
-                tmp.connection.close()
+                tmp.connection.shutdown(2)
                 break
         client.uid = uid
         self.online.append(client)
