@@ -1,4 +1,5 @@
 from modules.base_module import Module
+import const
 
 class_name = "Billing"
 
@@ -12,6 +13,8 @@ class Billing(Module):
                          "bs": self.buy_silver}
 
     def check_purchase(self, msg, client):
+        if not const.FREE_GOLD:
+            return
         amount = int(msg[2]["prid"].split("pack")[1])*100
         user_data = self.server.get_user_data(client.uid)
         gold = user_data["gld"] + amount
