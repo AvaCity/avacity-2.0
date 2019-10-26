@@ -72,5 +72,6 @@ class Profession(Module):
                 if new_apprnc[color] == old_apprnc[color]:
                     continue
             id_ = new_apprnc[item]
-            brush += self.server.appearance[gender][item][id_]["brush"]
+            if "brush" in self.server.appearance[gender][item][id_]:
+                brush += self.server.appearance[gender][item][id_]["brush"]
         return brush
