@@ -34,7 +34,7 @@ class Player(Module):
             scs = "success"
             locinfo = {"st": 0, "s": "127.0.0.1", "at": None, "d": 0,
                        "x": -1.0, "y": -1.0, "shlc": True, "pl": "",
-                       "l": tmp.room}
+                       "l": user.room}
         client.send(["pl.flw", {"scs": scs, "locinfo": locinfo}])
 
     def get_online_statuses(self, msg, client):
