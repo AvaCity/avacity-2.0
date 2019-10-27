@@ -34,7 +34,6 @@ class Location(Module):
                 uid = msg[1]["tmid"]
                 rl = self.server.modules["rl"]
                 link = rl.get_link(client.uid, uid)
-                print(link)
                 if link:
                     rl.add_progress(self.actions[subcommand], link)
             for tmp in self.server.online:
