@@ -1,5 +1,6 @@
 import time
 from modules.base_module import Module
+import utils.bot_common
 
 class_name = "Component"
 
@@ -130,6 +131,9 @@ class Component(Module):
         elif command == "unban":
             uid = msg.split()[1]
             return self.unban_user(uid, client)
+        elif command == "reset":
+            uid = msg.split()[1]
+            return self.reset_user(uid, client)
 
     def send_system_message(self, msg, client):
         user_data = self.server.get_user_data(client.uid)
@@ -162,6 +166,22 @@ class Component(Module):
             break
         client.send(["cp.ms.rsm", {"txt": f"Игроку {apprnc['n']} выдан мут "
                                           f"на {minutes} минут"}])
+
+    def reset_user(self, uid, client):
+        user_data = self.server.get_user_data(client.uid)
+        if user_data["role"] < 5:
+            return self.no_permission(client)
+        apprnc = self.server.get_appearance(uid)
+        if not apprnc:
+            client.send(["cp.ms.rsm", {"txt": "Аккаунт и так сброшен"}])
+            return
+        for tmp in self.server.online.copy():
+            if tmp.uid != uid:
+                continue
+            tmp.connection.shutdown(2)
+            break
+        utils.bot_common.reset_account(self.server.redis, uid)
+        client.send(["cp.ms.rsm", {"txt": f"Аккаунт {uid} был сброшен"}])
 
     def no_permission(self, client):
         client.send(["cp.ms.rsm", {"txt": "У вас недостаточно прав, чтобы "
