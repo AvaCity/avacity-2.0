@@ -81,6 +81,7 @@ class Avatar(Module):
             else:
                 tmp = cloth["tpid"]
             if tmp not in items:
+                logging.error(f"{tmp} not found for {client.uid}")
                 return
         wearing = self.server.redis.smembers(f"uid:{client.uid}:wearing")
         for cloth in wearing:
