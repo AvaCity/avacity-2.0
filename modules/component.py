@@ -53,17 +53,22 @@ class Component(Module):
             client.send(["cp.m.ar", {"pvlg": msg[2]["pvlg"],
                                      "sccss": success}])
         elif subcommand == "bu":
-            return self.ban_user(msg, client)
+            uid = msg[2]["uid"]
+            return self.ban_user(uid, client)
 
-    def ban_user(self, msg, client):
+    def ban_user(self, uid, client):
         user_data = self.server.get_user_data(client.uid)
         if user_data["role"] < self.privileges["AVATAR_BAN"]:
             return
-        uid = msg[2]["uid"]
         uid_user_data = self.server.get_user_data(uid)
         if uid_user_data["role"] > 2:
             return
         redis = self.server.redis
+        banned = redis.get(f"uid{uid}:banned")
+        if banned:
+            client.send(["cp.ms.rsm", {"txt": f"У UID {uid} уже есть бан"
+                                              f"от администратора {banned}"}])
+            return
         redis.set(f"uid:{uid}:banned", client.uid)
         ban_time = int(time.time()*1000)
         redis.set(f"uid:{uid}:ban_time", ban_time)
@@ -72,12 +77,27 @@ class Component(Module):
                 continue
             tmp.send([10, "User is banned",
                       {"duration": 999999, "banTime": ban_time,
-                       "notes": "Опа бан", "reviewerId": client.uid,
-                       "reasonId": 0, "unbanType": "none", "leftTime": 0,
-                       "id": None, "reviewState": 1, "userId": uid,
+                       "notes": "", "reviewerId": client.uid, "reasonId": 0,
+                       "unbanType": "none", "leftTime": 0, "id": None,
+                       "reviewState": 1, "userId": uid,
                        "moderatorId": client.uid}], type_=2)
             tmp.connection.shutdown(2)
             break
+        client.send(["cp.ms.rsm", {"txt": f"UID {uid} получил бан"}])
+
+    def unban_user(self, uid, client):
+        user_data = self.server.get_user_data(client.uid)
+        if user_data["role"] < self.privileges["AVATAR_BAN"]:
+            return
+        redis = self.server.redis
+        banned = redis.get(f"uid:{uid}:banned")
+        if not banned:
+            client.send(["cp.ms.rsm", {"txt": f"У UID {uid} нет бана"}])
+            return
+        redis.delete(f"uid:{uid}:banned")
+        redis.delete(f"uid:{uid}:ban_time")
+        client.send(["cp.ms.rsm", {"txt": f"Снят бан UID {uid} от "
+                                          f"администратора {banned}"}])
 
     def message(self, msg, client):
         subcommand = msg[1].split(".")[2]
@@ -104,6 +124,12 @@ class Component(Module):
             return self.send_system_message(msg, client)
         elif command == "mute":
             return self.mute_player(msg, client)
+        elif command == "ban":
+            uid = msg.split()[1]
+            return self.ban_user(uid, client)
+        elif command == "unban":
+            uid = msg.split()[1]
+            return self.unban_user(uid, client)
 
     def send_system_message(self, msg, client):
         user_data = self.server.get_user_data(client.uid)
