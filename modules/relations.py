@@ -149,24 +149,34 @@ class Relations(Module):
         value = self.progresses[action]
         s = int(self.server.redis.get(f"rl:{link}:s"))
         p = int(self.server.redis.get(f"rl:{link}:p"))
+        if 100 in self.statuses[s]["progress"]:
+            max_value = 100
+        else:
+            max_value = 0
+        if -100 in self.statuses[s]["progress"]:
+            min_value = -100
+        else:
+            min_value = 0
         total = p + value
-        if total >= 100:
+        if total >= max_value:
             total = 100
-        elif total < -100:
+        elif min_value < min_value:
             total = -100
         if total in self.statuses[s]["progress"]:
             self.server.redis.set(f"rl:{link}:p", 0)
             self.server.redis.set(f"rl:{link}:s",
                                   self.statuses[s]["progress"][total])
+            command = "rl.crs"
         else:
             self.server.redis.set(f"rl:{link}:p", total)
+            command = "rl.urp"
         for uid in link.split(":"):
             rl = self._get_relation(uid, link)
             rl["chprr"] = action
             for tmp in self.server.online.copy():
                 if tmp.uid != uid:
                     continue
-                tmp.send(["rl.urp", rl])
+                tmp.send([command, rl])
                 break
 
     def get_link(self, uid1, uid2):
