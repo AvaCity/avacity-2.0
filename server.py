@@ -93,7 +93,10 @@ class Server():
             return
         for tmp in self.online:
             if tmp.uid == uid:
-                tmp.connection.shutdown(2)
+                try:
+                    tmp.connection.shutdown(2)
+                except OSError:
+                    pass
                 break
         client.uid = uid
         self.online.append(client)
