@@ -94,8 +94,6 @@ async def process_config(version):
     doc = etree.parse(f"{directory}/avatarAppearance/appearance.xml",
                       parser=parser)
     root = doc.getroot()
-    for el in root.xpath("//item[@canBuy='0']"):
-        del el.attrib["canBuy"]
     for el in root.xpath("//item[@clanOnly='1']"):
         del el.attrib["clanOnly"]
     string = etree.tostring(root, pretty_print=True,
