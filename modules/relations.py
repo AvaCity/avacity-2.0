@@ -73,6 +73,8 @@ class Relations(Module):
         if user_data["role"] < privileges["RELATION_TEST_PANEL"]:
             return
         relation = msg[2]
+        if client.uid == relation["uid"]:
+            return
         link = self.get_link(client.uid, relation["uid"])
         if not link:
             return self._create_relation(f"{client.uid}:{relation['uid']}",

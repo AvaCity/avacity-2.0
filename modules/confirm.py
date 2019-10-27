@@ -14,6 +14,8 @@ class UserConfirm(Module):
         self.confirms = {}
 
     def user_confirm(self, msg, client):
+        if msg[2]["uid"] == client.uid:
+            return
         for tmp in self.server.online.copy():
             if tmp.uid == msg[2]["uid"]:
                 self.confirms[client.uid] = {"uid": msg[2]["uid"],
