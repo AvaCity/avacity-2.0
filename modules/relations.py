@@ -12,7 +12,10 @@ class Relations(Module):
         self.commands = {"get": self.get_relations,
                          "crt": self.create_relation,
                          "adcr": self.admin_create_relation,
-                         "rmv": self.remove_relation}
+                         "rmv": self.remove_relation,
+                         "crs": self.change_relation_status}
+        self.statuses = self.server.parser.parse_relations()
+        self.progresses = self.server.parser.parse_relation_progresses()
 
     def get_relations(self, msg, client):
         data = ["rl.get", {"uid": client.uid, "rlts": {}}]
@@ -44,15 +47,9 @@ class Relations(Module):
            not confirms[client.uid]["completed"]:
             return
         relation = msg[2]
-        redis = self.server.redis
-        rlts = redis.smembers(f"rl:{client.uid}")
-        if f"{relation['uid']}:{client.uid}" in rlts:
+        if self.get_link(client.uid, relation["uid"]):
             return
-        elif f"{client.uid}:{relation['uid']}" in rlts:
-            return
-        else:
-            return self._create_relation(f"{client.uid}:{relation['uid']}",
-                                         relation)
+        self._create_relation(f"{client.uid}:{relation['uid']}", relation)
         if client.uid in confirms:
             del confirms[client.uid]
 
@@ -76,17 +73,25 @@ class Relations(Module):
         if user_data["role"] < privileges["RELATION_TEST_PANEL"]:
             return
         relation = msg[2]
-        redis = self.server.redis
-        rlts = redis.smembers(f"rl:{client.uid}")
-        if f"{relation['uid']}:{client.uid}" in rlts:
-            return self._update_relation(f"{relation['uid']}:{client.uid}",
-                                         relation)
-        elif f"{client.uid}:{relation['uid']}" in rlts:
-            return self._update_relation(f"{client.uid}:{relation['uid']}",
-                                         relation)
-        else:
+        link = self.get_link(client.uid, relation["uid"])
+        if not link:
             return self._create_relation(f"{client.uid}:{relation['uid']}",
                                          relation)
+        self._update_relation(link, relation)
+
+    def change_relation_status(self, msg, client):
+        relation = msg[2]
+        link = self.get_link(client.uid, relation["uid"])
+        if not link:
+            return
+        rl = self._get_relation(client.uid, link)["rlt"]
+        status = self.statuses[rl["s"]]
+        if relation["s"] not in status["transition"]:
+            privileges = self.server.modules["cp"].privileges
+            user_data = self.server.get_user_data(client.uid)
+            if user_data["role"] < privileges["RELATION_TEST_PANEL"]:
+                return
+        self._update_relation(link, relation)
 
     def _create_relation(self, link, relation):
         pipe = self.server.redis.pipeline()
@@ -139,6 +144,39 @@ class Relations(Module):
                 if tmp.uid != uid:
                     continue
                 tmp.send(["rl.rmv", {"uid": second_uid}])
+
+    def add_progress(self, action, link):
+        value = self.progresses[action]
+        s = int(self.server.redis.get(f"rl:{link}:s"))
+        p = int(self.server.redis.get(f"rl:{link}:p"))
+        total = p + value
+        if total >= 100:
+            total = 100
+        elif total < -100:
+            total = -100
+        if total in self.statuses[s]["progress"]:
+            self.server.redis.set(f"rl:{link}:p", 0)
+            self.server.redis.set(f"rl:{link}:s",
+                                  self.statuses[s]["progress"][total])
+        else:
+            self.server.redis.set(f"rl:{link}:p", total)
+        for uid in link.split(":"):
+            rl = self._get_relation(uid, link)
+            rl["chprr"] = action
+            for tmp in self.server.online.copy():
+                if tmp.uid != uid:
+                    continue
+                tmp.send(["rl.urp", rl])
+                break
+
+    def get_link(self, uid1, uid2):
+        rlts = self.server.redis.smembers(f"rl:{uid1}")
+        if f"{uid1}:{uid2}" in rlts:
+            return f"{uid1}:{uid2}"
+        elif f"{uid2}:{uid1}" in rlts:
+            return f"{uid2}:{uid1}"
+        else:
+            return None
 
     def _get_relation(self, uid, link):
         if link.split(":")[0] == uid:

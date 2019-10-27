@@ -162,3 +162,31 @@ class Parser():
                         if attr in item.attrib:
                             apprnc[gender][map_][kind][attr] = True
         return apprnc
+
+    def parse_relations(self):
+        doc = etree.parse("config_all_ru/modules/relations.xml",
+                          parser=self.parser)
+        root = doc.getroot()
+        statuses = {}
+        tmp = root.find(".//statuses")
+        for status in tmp.findall("status"):
+            id_ = int(status.attrib["id"])
+            statuses[id_] = {"transition": [], "progress": {}}
+            for progress in status.findall("progress"):
+                value = int(progress.attrib["value"])
+                tmp_status = int(progress.attrib["status"])
+                statuses[id_]["progress"][value] = tmp_status
+            for trans in status.findall("statusForTransition"):
+                tmp_id = int(trans.attrib["id"])
+                statuses[id_]["transition"].append(tmp_id)
+        return statuses
+
+    def parse_relation_progresses(self):
+        doc = etree.parse("config_all_ru/modules/relations.xml")
+        root = doc.getroot()
+        progresses = {}
+        tmp = root.find(".//progresses")
+        for progress in tmp.findall("progress"):
+            value = int(progress.attrib["value"])
+            progresses[progress.attrib["reason"]] = value
+        return progresses

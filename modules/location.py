@@ -8,12 +8,17 @@ class Location(Module):
     def __init__(self, server):
         self.server = server
         self.commands = {"r": self.room}
+        self.actions = {"ks": "kiss", "hg": "hug", "gf": "giveFive",
+                        "k": "kickAss", "sl": "slap", "lks": "longKiss",
+                        "hs": "handShake"}
 
     def room(self, msg, client):
         subcommand = msg[1].split(".")[2]
         if subcommand in ["u", "m", "k", "sa", "sl", "bd", "lks", "hs",
                           "ks", "hg", "gf"]:
             msg.pop(0)
+            if msg[1]["uid"] != client.uid:
+                return
             if subcommand == "u":
                 client.position = (msg[1]["x"], msg[1]["y"])
                 client.direction = msg[1]["d"]
@@ -25,6 +30,13 @@ class Location(Module):
             elif subcommand == "sa":
                 if "pntHlRd" in msg[1]["at"]:
                     return
+            elif subcommand in self.actions:
+                uid = msg[1]["tmid"]
+                rl = self.server.modules["rl"]
+                link = rl.get_link(client.uid, uid)
+                print(link)
+                if link:
+                    rl.add_progress(self.actions[subcommand], link)
             for tmp in self.server.online:
                 if tmp.uid == client.uid or tmp.room != client.room:
                     continue
