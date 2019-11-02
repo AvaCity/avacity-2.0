@@ -14,7 +14,7 @@ modules = ["client_error", "house", "outside", "user_rating", "mail", "avatar",
            "location_game", "relations", "social_request", "user_rating",
            "competition", "furniture", "billing", "component", "support",
            "passport", "player", "statistics", "shop", "mobile", "confirm",
-           "craft", "profession", "inventory"]
+           "craft", "profession", "inventory", "event"]
 
 
 def get_git_revision_short_hash():

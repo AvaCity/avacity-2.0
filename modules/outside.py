@@ -13,18 +13,18 @@ class Outside(Location):
         self.commands.update({"r": self.room, "gr": self.get_room})
 
     def get_room(self, msg, client):
-        online = self.server.online.copy()
-        num = 1
-        while True:
-            i = 0
-            for tmp in online:
-                if tmp.room == f"{msg[2]['lid']}_{msg[2]['gid']}_{num}":
-                    i += 1
-            if i >= const.ROOM_LIMIT:
-                num += 1
-            else:
-                break
-        room = f"{msg[2]['lid']}_{msg[2]['gid']}_{num}"
+        if "rid" not in msg[2]:
+            num = 1
+            room = f"{msg[2]['lid']}_{msg[2]['gid']}_{num}"
+            while True:
+                if self._get_room_len(room) >= const.ROOM_LIMIT:
+                    num += 1
+                else:
+                    break
+        else:
+            room = f"{msg[2]['lid']}_{msg[2]['gid']}_{msg[2]['rid']}"
+            if self._get_room_len(room) >= const.ROOM_LIMIT:
+                return
         if client.room:
             prefix = common.get_prefix(client.room)
             for tmp in self.server.online.copy():
@@ -57,3 +57,10 @@ class Outside(Location):
             client.send(["o.r.info", {"rmmb": rmmb, "evn": None}])
         else:
             super().room(msg, client)
+
+    def _get_room_len(self, room):
+        i = 0
+        for tmp in self.server.online.copy():
+            if tmp.room == room:
+                i += 1
+        return i
