@@ -39,9 +39,10 @@ class Event(Module):
             return
         ev = msg[2]["ev"]
         duration = int(msg[2]["evdrid"].split("eventDuration")[1])
-        if ev["r"] > 13:
+        if ev["r"] > 13 or ev["c"] == 3:
             user_data = self.server.get_user_data(client.uid)
-            if user_data["role"] < 2:
+            privileges = self.server.modules["cp"].privileges
+            if user_data["role"] < privileges["CREATE_MODERATOR_EVENT"]:
                 return
         event = {"name": ev["tt"], "description": ev["ds"],
                  "start": int(time.time()), "uid": client.uid,
