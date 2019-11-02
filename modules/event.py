@@ -22,11 +22,10 @@ class Event(Module):
     def get_events(self, msg, client):
         evts = []
         for uid in self.events:
-            event = self.events[uid]
             apprnc = self.server.get_appearance(uid)
             if not apprnc:
                 continue
-            evts.append(self._get_event(event, uid))
+            evts.append(self._get_event(uid))
         client.send(["ev.get", {"c": -1, "tg": "", "evlst": evts}])
 
     def get_self_event(self, msg, client):
