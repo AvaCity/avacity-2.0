@@ -23,7 +23,11 @@ class Outside(Location):
                     break
         else:
             room = f"{msg[2]['lid']}_{msg[2]['gid']}_{msg[2]['rid']}"
-            if self._get_room_len(room) >= const.ROOM_LIMIT:
+            if msg[2]["gid"][-1] == "e":
+                limit = const.EVENT_ROOM_LIMIT
+            else:
+                limit = const.ROOM_LIMIT
+            if self._get_room_len(room) >= limit:
                 return
         if client.room:
             prefix = common.get_prefix(client.room)

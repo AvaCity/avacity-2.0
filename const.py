@@ -8,6 +8,7 @@ XML = """<?xml version="1.0"?>
 
 MAX_NAME_LEN = 20
 ROOM_LIMIT = 15
+EVENT_ROOM_LIMIT = 40
 FREE_GOLD = True
 
 room_items = [{"tpid": "wall15", "d": 3, "oid": 1, "x": 0.0, "y": 0.0,
