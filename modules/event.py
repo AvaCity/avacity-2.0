@@ -48,7 +48,10 @@ class Event(Module):
                  "finish": int(time.time()+duration*60),
                  "min_lvl": ev["ml"], "category": ev["c"], "active": ev["ac"],
                  "rating": ev["r"]}
-        event["location"] = ev["l"]
+        if not ev["l"]:
+            event["location"] = "livingroom"
+        else:
+            event["location"] = ev["l"]
         self.events[client.uid] = event
         user_data = self.server.get_user_data(client.uid)
         client.send(["ev.crt", {"ev": self._get_event(client.uid),
