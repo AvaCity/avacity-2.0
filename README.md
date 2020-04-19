@@ -1,4 +1,4 @@
-# Ava.City 2.0
+# Ava.City - https://Avacity.xyz | https//Ava.City (скопируй)
 Тестовый сервер: https://ava.city
 
 Регистрация через Telegram: https://t.me/avacity_test_bot (@avacity_test_bot)
